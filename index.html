@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lerntheke – Geheimnisvolle Geschichten</title>
+<link href="https://fonts.googleapis.com/css2?family=Creepster&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f2ee;
+    --surface: #ffffff;
+    --surface2: #f9f7f4;
+    --border: #ddd9d2;
+    --text: #1a1714;
+    --text-dim: #6b6560;
+    --s1: #1a6fbf;
+    --s1-h: #deeaf7;
+    --s2: #1a7a40;
+    --s2-h: #d8f0e3;
+    --s3: #c05a00;
+    --s3-h: #fdefd8;
+    --s4: #b01030;
+    --s4-h: #fce0e6;
+    --bonus: #8a6800;
+    --bonus-h: #fdf3cc;
+    --radius: 14px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    text-align: center;
+    padding: 2.5rem 1.5rem 1.5rem;
+    position: relative;
+  }
+
+  .header-eyebrow {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 0.5rem;
+  }
+
+  header h1 {
+    font-family: 'Creepster', cursive;
+    font-size: clamp(2.2rem, 6vw, 3.8rem);
+    letter-spacing: 0.04em;
+    color: #1a1714;
+    line-height: 1.1;
+    margin-bottom: 0.4rem;
+  }
+
+  .header-sub {
+    font-size: 1rem;
+    color: var(--text-dim);
+    font-weight: 600;
+  }
+
+  /* ── TANDEM BANNER ── */
+  .tandem-banner {
+    margin: 0 auto 2rem;
+    max-width: 700px;
+    padding: 0 1rem;
+  }
+  .tandem-inner {
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text);
+    box-shadow: var(--shadow);
+  }
+  .tandem-inner .icon { font-size: 1.8rem; flex-shrink: 0; }
+  .tandem-inner span { font-weight: 400; color: var(--text-dim); }
+
+  /* ── DIFF LEGEND ── */
+  .legend {
+    display: flex;
+    justify-content: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin: 0 auto 2.5rem;
+    padding: 0 1rem;
+    max-width: 700px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 0.3rem 0.8rem;
+    border-radius: 999px;
+    border: 1.5px solid;
+  }
+  .l-easy   { color: var(--s1); border-color: var(--s1); background: var(--s1-h); }
+  .l-med    { color: var(--s2); border-color: var(--s2); background: var(--s2-h); }
+  .l-hard   { color: var(--s3); border-color: var(--s3); background: var(--s3-h); }
+  .l-xhard  { color: var(--s4); border-color: var(--s4); background: var(--s4-h); }
+  .l-bonus  { color: var(--bonus); border-color: var(--bonus); background: var(--bonus-h); }
+
+  /* ── GRID ── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.4rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1.2rem 3rem;
+  }
+
+  /* ── STATION CARD ── */
+  .card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1.5px solid var(--border);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.18s, box-shadow 0.18s;
+  }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(0,0,0,0.6); }
+
+  .card-header {
+    padding: 1.1rem 1.3rem 0.9rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.9rem;
+    border-bottom: 1.5px solid var(--border);
+  }
+
+  .station-emoji {
+    font-size: 2rem;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+
+  .card-meta { flex: 1; }
+
+  .station-label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 0.2rem;
+  }
+
+  .card-title {
+    font-size: 1.15rem;
+    font-weight: 900;
+    line-height: 1.2;
+    color: var(--text);
+  }
+
+  .diff-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    flex-shrink: 0;
+    border: 1.5px solid;
+    white-space: nowrap;
+    margin-top: 0.1rem;
+  }
+
+  /* Farben pro Station */
+  .s1 .station-label, .s1 .dot { color: var(--s1); }
+  .s1 .card-header { border-bottom-color: var(--s1-h); }
+  .s1 .diff-badge { color: var(--s1); border-color: var(--s1); background: var(--s1-h); }
+  .s1 .task-num { background: var(--s1); }
+  .s1 .heft-strip { border-left-color: var(--s1); }
+
+  .s2 .station-label, .s2 .dot { color: var(--s2); }
+  .s2 .card-header { border-bottom-color: var(--s2-h); }
+  .s2 .diff-badge { color: var(--s2); border-color: var(--s2); background: var(--s2-h); }
+  .s2 .task-num { background: var(--s2); }
+  .s2 .heft-strip { border-left-color: var(--s2); }
+
+  .s3 .station-label, .s3 .dot { color: var(--s3); }
+  .s3 .card-header { border-bottom-color: var(--s3-h); }
+  .s3 .diff-badge { color: var(--s3); border-color: var(--s3); background: var(--s3-h); }
+  .s3 .task-num { background: var(--s3); }
+  .s3 .heft-strip { border-left-color: var(--s3); }
+
+  .s4 .station-label, .s4 .dot { color: var(--s4); }
+  .s4 .card-header { border-bottom-color: var(--s4-h); }
+  .s4 .diff-badge { color: var(--s4); border-color: var(--s4); background: var(--s4-h); }
+  .s4 .task-num { background: var(--s4); }
+  .s4 .heft-strip { border-left-color: var(--s4); }
+
+  .s5 .station-label, .s5 .dot { color: var(--bonus); }
+  .s5 .card-header { border-bottom-color: var(--bonus-h); }
+  .s5 .diff-badge { color: var(--bonus); border-color: var(--bonus); background: var(--bonus-h); }
+  .s5 .task-num { background: var(--bonus); }
+  .s5 .heft-strip { border-left-color: var(--bonus); }
+
+  /* ── CARD BODY ── */
+  .card-body {
+    padding: 1.1rem 1.3rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* Aufgaben */
+  .tasks { display: flex; flex-direction: column; gap: 0.75rem; }
+
+  .task {
+    display: flex;
+    gap: 0.7rem;
+    align-items: flex-start;
+  }
+
+  .task-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 900;
+    color: #fff;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .task-text {
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .task-text em {
+    font-style: italic;
+    color: var(--text-dim);
+    font-weight: 400;
+  }
+
+  .task-text strong { font-weight: 900; }
+
+  /* Heft-Hinweis */
+  .heft-strip {
+    background: var(--surface2);
+    border-left: 3px solid;
+    border-radius: 0 8px 8px 0;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: auto;
+  }
+  .heft-strip .heft-icon { font-size: 1rem; }
+
+  /* Beispiel-Box */
+  .beispiel {
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.88rem;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .beispiel strong { color: var(--text-dim); display: block; margin-bottom: 0.3rem; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .beispiel p { font-style: italic; line-height: 1.55; color: #2a2520; }
+
+  /* Diff dots */
+  .diff-dots { display: flex; gap: 3px; margin-top: 4px; }
+  .dot { font-size: 0.6rem; }
+
+  /* Span full width for writing station */
+  .span-full { grid-column: 1 / -1; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .grid { grid-template-columns: 1fr; }
+    header h1 { font-size: 2rem; }
+    .span-full { grid-column: 1; }
+  }
+
+  /* ── ENTER ANIMATION ── */
+  .card {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.4s ease forwards;
+  }
+  .card:nth-child(1) { animation-delay: 0.05s; }
+  .card:nth-child(2) { animation-delay: 0.12s; }
+  .card:nth-child(3) { animation-delay: 0.19s; }
+  .card:nth-child(4) { animation-delay: 0.26s; }
+  .card:nth-child(5) { animation-delay: 0.33s; }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Progress indicator */
+  .progress-bar {
+    max-width: 700px;
+    margin: 0 auto 2rem;
+    padding: 0 1rem;
+  }
+  .progress-label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-dim);
+    margin-bottom: 0.4rem;
+    display: flex;
+    justify-content: space-between;
+  }
+  .progress-track {
+    height: 6px;
+    background: var(--border);
+    border-radius: 999px;
+    display: flex;
+    gap: 4px;
+    overflow: hidden;
+  }
+  .progress-seg {
+    flex: 1;
+    border-radius: 999px;
+    opacity: 0.35;
+    transition: opacity 0.3s;
+    cursor: pointer;
+  }
+  .progress-seg.done { opacity: 1; }
+  .progress-seg.s1c { background: var(--s1); }
+  .progress-seg.s2c { background: var(--s2); }
+  .progress-seg.s3c { background: var(--s3); }
+  .progress-seg.s4c { background: var(--s4); }
+  .progress-seg.s5c { background: var(--bonus); }
+
+  .card.done-card {
+    opacity: 0.6;
+  }
+  .card.done-card .card-header::after {
+    content: '✓ Fertig';
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: var(--s2);
+    margin-left: auto;
+  }
+
+  .done-btn {
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.6rem;
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s;
+    letter-spacing: 0.04em;
+  }
+  .done-btn:hover { border-color: var(--s2); color: var(--s2); }
+  .done-btn.marked { background: var(--s2-h); border-color: var(--s2); color: var(--s2); }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="header-eyebrow">Deutsch · Klasse 6 · Lerntheke</p>
+  <h1>👻 Geheimnisvolle Geschichten</h1>
+  <p class="header-sub">Wähle mindestens 3 Stationen · Schreibe alles ins Heft</p>
+</header>
+
+<!-- Tandem-Hinweis -->
+<div class="tandem-banner">
+  <div class="tandem-inner">
+    <span class="icon">👥</span>
+    <div>Tandemarbeit – ihr arbeitet zu zweit.
+      <span>Lest die Aufgabe gemeinsam, besprecht euch – und schreibt jeder seine eigene Lösung ins Heft.</span>
+    </div>
+  </div>
+</div>
+
+<!-- Schwierigkeits-Legende -->
+<div class="legend">
+  <div class="legend-item l-easy">⬤ Leicht</div>
+  <div class="legend-item l-med">⬤ Mittel</div>
+  <div class="legend-item l-hard">⬤ Mittel-schwer</div>
+  <div class="legend-item l-xhard">⬤ Schwer</div>
+  <div class="legend-item l-bonus">★ Bonus</div>
+</div>
+
+<!-- Progress -->
+<div class="progress-bar">
+  <div class="progress-label">
+    <span>Euer Fortschritt</span>
+    <span id="progress-count">0 von 4 Pflicht-Stationen</span>
+  </div>
+  <div class="progress-track">
+    <div class="progress-seg s1c" id="p1" onclick="toggleDone(1)"></div>
+    <div class="progress-seg s2c" id="p2" onclick="toggleDone(2)"></div>
+    <div class="progress-seg s3c" id="p3" onclick="toggleDone(3)"></div>
+    <div class="progress-seg s4c" id="p4" onclick="toggleDone(4)"></div>
+    <div class="progress-seg s5c" id="p5" onclick="toggleDone(5)"></div>
+  </div>
+</div>
+
+<!-- STATIONEN GRID -->
+<div class="grid">
+
+  <!-- STATION 1 – CLUSTER (Leicht) -->
+  <div class="card s1" id="card1">
+    <div class="card-header">
+      <div class="station-emoji">🧠</div>
+      <div class="card-meta">
+        <div class="station-label">Station 1 · Pflicht</div>
+        <div class="card-title">Cluster – Ideen sammeln</div>
+        <div class="diff-dots"><span class="dot">⬤</span></div>
+      </div>
+      <div class="diff-badge">⬤ Leicht</div>
+    </div>
+    <div class="card-body">
+      <div class="tasks">
+        <div class="task">
+          <div class="task-num">a</div>
+          <div class="task-text">
+            Zeichne ein Cluster zum Wort <strong>DUNKELHEIT</strong> ins Heft.
+            Schreibt mindestens <strong>8 Wörter</strong> drum herum –
+            <em>Gefühle, Geräusche, Bilder, Farben.</em>
+          </div>
+        </div>
+        <div class="task">
+          <div class="task-num">b</div>
+          <div class="task-text">
+            Zweites Cluster: <strong>VERLASSENES HAUS</strong>.
+            Was seht ihr? Hört ihr? Riecht ihr? Fühlt ihr?
+          </div>
+        </div>
+      </div>
+      <div class="beispiel">
+        <strong>💡 Tipp</strong>
+        <p>Euer Cluster ist euer persönlicher Wortspeicher – nutzt ihn in Station 3!</p>
+      </div>
+      <div class="heft-strip">
+        <span class="heft-icon">📓</span>
+        Ins Heft: Cluster zeichnen + beschriften
+      </div>
+      <button class="done-btn" onclick="toggleDone(1)" id="btn1">✓ Station abgehakt</button>
+    </div>
+  </div>
+
+  <!-- STATION 2 – PRÄTERITUM (Mittel) -->
+  <div class="card s2" id="card2">
+    <div class="card-header">
+      <div class="station-emoji">⏱️</div>
+      <div class="card-meta">
+        <div class="station-label">Station 2 · Pflicht</div>
+        <div class="card-title">Präteritum – Formen trainieren</div>
+        <div class="diff-dots"><span class="dot">⬤</span><span class="dot">⬤</span></div>
+      </div>
+      <div class="diff-badge">⬤⬤ Mittel</div>
+    </div>
+    <div class="card-body">
+      <div class="tasks">
+        <div class="task">
+          <div class="task-num">a</div>
+          <div class="task-text">
+            Schreibt die <strong>Präteritum-Form</strong> (er/sie/es) ins Heft:
+            <em>gehen · stehen · sehen · halten · sein · schleichen · knarren · flüstern · erstarren · haben</em>
+          </div>
+        </div>
+        <div class="task">
+          <div class="task-num">b</div>
+          <div class="task-text">
+            Schreibt den folgenden Text <strong>vollständig ins Präteritum</strong> um
+            und korrigiert dabei die 5 Fehler:
+          </div>
+        </div>
+      </div>
+      <div class="beispiel">
+        <strong>📖 Fehlertext</strong>
+        <p>„Es <u>ist</u> eine dunkle Nacht. Emma <u>geht</u> langsam auf die alte Hütte zu. Plötzlich <u>knarrt</u> die Tür. Sie <u>bleibt</u> stehen und <u>hält</u> den Atem an. Ein kalter Wind wehte durch die Bäume."</p>
+      </div>
+      <div class="heft-strip">
+        <span class="heft-icon">📓</span>
+        Ins Heft: Tabelle + korrigierter Text
+      </div>
+      <button class="done-btn" onclick="toggleDone(2)" id="btn2">✓ Station abgehakt</button>
+    </div>
+  </div>
+
+  <!-- STATION 3 – GESCHICHTE SCHREIBEN (Mittel-schwer) -->
+  <div class="card s3 span-full" id="card3">
+    <div class="card-header">
+      <div class="station-emoji">✍️</div>
+      <div class="card-meta">
+        <div class="station-label">Station 3 · Pflicht · Hauptaufgabe</div>
+        <div class="card-title">Geschichte weiterschreiben</div>
+        <div class="diff-dots"><span class="dot">⬤</span><span class="dot">⬤</span><span class="dot">⬤</span></div>
+      </div>
+      <div class="diff-badge">⬤⬤⬤ Mittel-schwer</div>
+    </div>
+    <div class="card-body">
+      <div class="beispiel">
+        <strong>📖 Euer Anfang – lest ihn laut vor</strong>
+        <p>„Es war schon spät, als Nele allein durch den Park ging. Die Laternen flimmerten schwach im Nebel. Irgendwo knackte ein Ast – einmal, dann noch einmal. Nele blieb stehen und lauschte. Da, zwischen den Bäumen, sah sie es: einen schwachen Lichtschein, der aus einem verlassenen Gebäudeeingang drang."</p>
+      </div>
+      <div class="tasks">
+        <div class="task">
+          <div class="task-num">a</div>
+          <div class="task-text">
+            Besprecht zu zweit: <strong>Was könnte als nächstes passieren?</strong>
+            Notiert 3 Ideen für die Steigerung und 1 Idee für den Höhepunkt.
+          </div>
+        </div>
+        <div class="task">
+          <div class="task-num">b</div>
+          <div class="task-text">
+            Schreibt die Geschichte <strong>alleine</strong> weiter
+            (<strong>mind. 100 Wörter</strong>, Präteritum, mind. 4 Wörter aus eurem Cluster).
+            Steigerung + Höhepunkt müssen erkennbar sein.
+          </div>
+        </div>
+        <div class="task">
+          <div class="task-num">c</div>
+          <div class="task-text">
+            Lest euch eure Texte gegenseitig vor.
+            Sagt dem Partner: <strong>Eine Stelle, die Spannung erzeugt hat – und warum.</strong>
+          </div>
+        </div>
+      </div>
+      <div class="heft-strip">
+        <span class="heft-icon">📓</span>
+        Ins Heft: 3 Ideen (a) · eigene Geschichte (b) · Feedback-Satz zum Partnertext (c)
+      </div>
+      <button class="done-btn" onclick="toggleDone(3)" id="btn3">✓ Station abgehakt</button>
+    </div>
+  </div>
+
+  <!-- STATION 4 – RECHTSCHREIBUNG (Schwer) -->
+  <div class="card s4" id="card4">
+    <div class="card-header">
+      <div class="station-emoji">🔍</div>
+      <div class="card-meta">
+        <div class="station-label">Station 4 · Pflicht</div>
+        <div class="card-title">Rechtschreibung – Detektiv</div>
+        <div class="diff-dots"><span class="dot">⬤</span><span class="dot">⬤</span><span class="dot">⬤</span><span class="dot">⬤</span></div>
+      </div>
+      <div class="diff-badge">⬤⬤⬤⬤ Schwer</div>
+    </div>
+    <div class="card-body">
+      <div class="tasks">
+        <div class="task">
+          <div class="task-num">a</div>
+          <div class="task-text">
+            Findet und korrigiert <strong>alle Fehler</strong> (Groß-/Kleinschreibung).
+            Schreibt den Text korrekt ins Heft:
+          </div>
+        </div>
+      </div>
+      <div class="beispiel">
+        <strong>📖 Fehlertext</strong>
+        <p>„Leon und mia standen vor dem alten Haus. ein kalter wind strich über ihre gesichter. Plötzlich hörten sie ein Knarren – laut und langsam, wie das ächzen eines alten baumes. Mia Griff nach Leons arm."</p>
+      </div>
+      <div class="tasks">
+        <div class="task">
+          <div class="task-num">b</div>
+          <div class="task-text">
+            Ergänzt die <strong>fehlenden Satzzeichen</strong> und schreibt die Sätze korrekt auf:
+            <em>„Die Tür war offen ein schwacher Lichtschein drang heraus" · „Plötzlich hörte sie ein Geräusch war da jemand" · „Lauf rief Tom sofort lauf" · „Es war dunkel kalt und völlig still"</em>
+          </div>
+        </div>
+      </div>
+      <div class="heft-strip">
+        <span class="heft-icon">📓</span>
+        Ins Heft: Korrigierter Text (a) + 4 Sätze mit Satzzeichen (b)
+      </div>
+      <button class="done-btn" onclick="toggleDone(4)" id="btn4">✓ Station abgehakt</button>
+    </div>
+  </div>
+
+  <!-- STATION 5 – BONUS: SHOW DON'T TELL -->
+  <div class="card s5" id="card5">
+    <div class="card-header">
+      <div class="station-emoji">⭐</div>
+      <div class="card-meta">
+        <div class="station-label">Station 5 · Bonus – nur wenn ihr Zeit habt!</div>
+        <div class="card-title">Stimmung zeigen – nicht sagen</div>
+        <div class="diff-dots"><span class="dot" style="color:var(--bonus)">★</span></div>
+      </div>
+      <div class="diff-badge">★ Bonus</div>
+    </div>
+    <div class="card-body">
+      <div class="beispiel">
+        <strong>💡 Das Prinzip: „Show, don't tell"</strong>
+        <p>Statt: „Es war gruselig." → Besser: „Die Dielen knarrten unter jedem Schritt."<br>
+        Statt: „Er hatte Angst." → Besser: „Sein Herz hämmerte bis in die Kehle."</p>
+      </div>
+      <div class="tasks">
+        <div class="task">
+          <div class="task-num">a</div>
+          <div class="task-text">
+            Schreibt jeden Satz so um, dass <strong>Stimmung entsteht, ohne das Gefühl zu nennen</strong>:
+            <em>„Es war sehr gruselig." · „Tom hatte große Angst." · „Es war sehr dunkel." · „Plötzlich passierte etwas Seltsames."</em>
+          </div>
+        </div>
+        <div class="task">
+          <div class="task-num">b</div>
+          <div class="task-text">
+            Schreibt einen <strong>Spannungsmoment (5–8 Sätze)</strong>: Ein langer dunkler Schulflur bei Nacht. Eine Tür steht einen Spalt offen. Am Ende ein schwaches Licht.
+          </div>
+        </div>
+      </div>
+      <div class="heft-strip">
+        <span class="heft-icon">📓</span>
+        Ins Heft: 4 umgeschriebene Sätze (a) + Spannungsmoment (b)
+      </div>
+      <button class="done-btn" onclick="toggleDone(5)" id="btn5">✓ Station abgehakt</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const done = new Set();
+
+  function toggleDone(n) {
+    const card = document.getElementById('card' + n);
+    const seg  = document.getElementById('p' + n);
+    const btn  = document.getElementById('btn' + n);
+
+    if (done.has(n)) {
+      done.delete(n);
+      card.classList.remove('done-card');
+      seg.classList.remove('done');
+      btn.classList.remove('marked');
+      btn.textContent = '✓ Station abgehakt';
+    } else {
+      done.add(n);
+      card.classList.add('done-card');
+      seg.classList.add('done');
+      btn.classList.add('marked');
+      btn.textContent = '✓ Erledigt!';
+    }
+    updateCount();
+  }
+
+  function updateCount() {
+    const pflicht = [1,2,3,4].filter(n => done.has(n)).length;
+    document.getElementById('progress-count').textContent =
+      pflicht + ' von 4 Pflicht-Stationen';
+  }
+</script>
+</body>
+</html>
