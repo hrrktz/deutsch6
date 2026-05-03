@@ -118,9 +118,9 @@
   /* ── GRID ── */
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: 1fr;
     gap: 1.4rem;
-    max-width: 1100px;
+    max-width: 720px;
     margin: 0 auto;
     padding: 0 1.2rem 3rem;
   }
@@ -294,14 +294,11 @@
   .diff-dots { display: flex; gap: 3px; margin-top: 4px; }
   .dot { font-size: 0.6rem; }
 
-  /* Span full width for writing station */
-  .span-full { grid-column: 1 / -1; }
+  /* single column layout - no span needed */
 
   /* ── RESPONSIVE ── */
   @media (max-width: 640px) {
-    .grid { grid-template-columns: 1fr; }
     header h1 { font-size: 2rem; }
-    .span-full { grid-column: 1; }
   }
 
   /* ── ENTER ANIMATION ── */
@@ -394,17 +391,7 @@
   <p class="header-sub">Wähle mindestens 3 Stationen · Schreibe alles ins Heft</p>
 </header>
 
-<!-- Tandem-Hinweis -->
-<div class="tandem-banner">
-  <div class="tandem-inner">
-    <span class="icon">👥</span>
-    <div>Tandemarbeit – ihr arbeitet zu zweit.
-      <span>Lest die Aufgabe gemeinsam, besprecht euch – und schreibt jeder seine eigene Lösung ins Heft.</span>
-    </div>
-  </div>
-</div>
-
-<!-- Schwierigkeits-Legende -->
+<!-- Legend -->
 <div class="legend">
   <div class="legend-item l-easy">⬤ Leicht</div>
   <div class="legend-item l-med">⬤ Mittel</div>
@@ -547,14 +534,14 @@
         <div class="task">
           <div class="task-num">c</div>
           <div class="task-text">
-            Lest euch eure Texte gegenseitig vor.
-            Sagt dem Partner: <strong>Eine Stelle, die Spannung erzeugt hat – und warum.</strong>
+            Lest euren Text noch einmal durch und markiert:
+            <strong>Eine Stelle, die Spannung erzeugt – und warum.</strong>
           </div>
         </div>
       </div>
       <div class="heft-strip">
         <span class="heft-icon">📓</span>
-        Ins Heft: 3 Ideen (a) · eigene Geschichte (b) · Feedback-Satz zum Partnertext (c)
+        Ins Heft: 3 Ideen (a) · eigene Geschichte (b) · markierte Spannungsstelle (c)
       </div>
       <button class="done-btn" onclick="toggleDone(3)" id="btn3">✓ Station abgehakt</button>
     </div>
