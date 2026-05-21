@@ -2,664 +2,1317 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lerntheke – Geheimnisvolle Geschichten</title>
-<link href="https://fonts.googleapis.com/css2?family=Creepster&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Das Geheimnis von Dunkelwald — Präteritum</title>
 <style>
-  :root {
-    --bg: #f4f2ee;
-    --surface: #ffffff;
-    --surface2: #f9f7f4;
-    --border: #ddd9d2;
-    --text: #1a1714;
-    --text-dim: #6b6560;
-    --s1: #1a6fbf;
-    --s1-h: #deeaf7;
-    --s2: #1a7a40;
-    --s2-h: #d8f0e3;
-    --s3: #c05a00;
-    --s3-h: #fdefd8;
-    --s4: #b01030;
-    --s4-h: #fce0e6;
-    --bonus: #8a6800;
-    --bonus-h: #fdf3cc;
-    --radius: 14px;
-    --shadow: 0 2px 12px rgba(0,0,0,0.08);
-  }
+:root{
+  --bg:#0c0b12;--panel:#14121f;--panel2:#1c1929;--border:#2e2a45;
+  --accent:#8b5cf6;--accent2:#c4b5fd;--fog:rgba(139,92,246,.10);
+  --gold:#f4bf47;--gold2:#fde98a;--green:#34d399;--red:#f87171;
+  --orange:#fb923c;--text:#e8e3f5;--muted:#7c7899;--r:12px;--rs:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:17px;}
+body{font-family:'Georgia',serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+/* PARTICLES */
+#particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.orb{position:absolute;border-radius:50%;filter:blur(60px);animation:drift linear infinite;}
+@keyframes drift{0%{transform:translateY(0) scale(1)}50%{transform:translateY(-30px) scale(1.05)}100%{transform:translateY(0) scale(1)}}
+.star2{position:absolute;background:rgba(255,255,255,.7);border-radius:50%;animation:twink ease-in-out infinite;}
+@keyframes twink{0%,100%{opacity:.1}50%{opacity:.8}}
 
-  body {
-    font-family: 'Nunito', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-  }
+/* LAYOUT */
+#app{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:16px 16px 100px;}
 
-  /* ── HEADER ── */
-  header {
-    text-align: center;
-    padding: 2.5rem 1.5rem 1.5rem;
-    position: relative;
-  }
+/* HEADER */
+.game-header{text-align:center;padding:24px 12px 18px;border-bottom:1px solid var(--border);margin-bottom:18px;}
+.game-header h1{font-size:1.7rem;color:var(--gold2);text-shadow:0 0 28px rgba(244,191,71,.35);margin-bottom:4px;letter-spacing:.5px;}
+.game-header .sub{color:var(--muted);font-style:italic;font-size:.8rem;}
 
-  .header-eyebrow {
-    font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin-bottom: 0.5rem;
-  }
+/* HUD */
+#hud{display:none;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;
+  background:var(--panel);border:1px solid var(--border);border-radius:var(--r);
+  padding:9px 14px;margin-bottom:14px;font-family:sans-serif;font-size:.78rem;}
+.hud-it{display:flex;align-items:center;gap:4px;}
+.hud-lb{color:var(--muted);}
+.hud-vl{color:var(--gold2);font-weight:700;}
+.hearts{display:flex;gap:2px;}
+.hrt{font-size:14px;transition:opacity .3s;}
+.hrt.lost{opacity:.15;filter:grayscale(1);}
+#pbar-wrap{flex:1;min-width:80px;background:var(--panel2);border-radius:20px;height:6px;border:1px solid var(--border);}
+#pbar{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .5s;}
 
-  header h1 {
-    font-family: 'Creepster', cursive;
-    font-size: clamp(2.2rem, 6vw, 3.8rem);
-    letter-spacing: 0.04em;
-    color: #1a1714;
-    line-height: 1.1;
-    margin-bottom: 0.4rem;
-  }
+/* NAV BAR */
+#nav-bar{
+  display:none;position:fixed;bottom:0;left:0;right:0;z-index:100;
+  background:rgba(12,11,18,.95);border-top:1px solid var(--border);
+  padding:8px 8px 10px;overflow-x:auto;white-space:nowrap;
+  -webkit-overflow-scrolling:touch;
+}
+#nav-bar::-webkit-scrollbar{height:3px;}
+#nav-bar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.nav-inner{display:inline-flex;gap:5px;padding:0 4px;}
+.nav-btn{
+  display:inline-flex;flex-direction:column;align-items:center;gap:2px;
+  background:var(--panel2);border:1px solid var(--border);border-radius:var(--rs);
+  color:var(--muted);font-family:sans-serif;font-size:.62rem;padding:5px 8px;
+  cursor:pointer;transition:all .15s;min-width:42px;white-space:normal;text-align:center;
+  -webkit-tap-highlight-color:transparent;
+}
+.nav-btn .nb-icon{font-size:1rem;line-height:1;}
+.nav-btn .nb-num{font-size:.58rem;font-weight:700;}
+.nav-btn:hover{border-color:var(--accent);color:var(--accent2);}
+.nav-btn.active{border-color:var(--accent);background:var(--fog);color:var(--accent2);}
+.nav-btn.done{border-color:var(--green);color:var(--green);}
+.nav-btn.done .nb-icon::after{content:'✓';font-size:.6rem;margin-left:2px;}
+.nav-btn.locked{opacity:.4;cursor:default;}
 
-  .header-sub {
-    font-size: 1rem;
-    color: var(--text-dim);
-    font-weight: 600;
-  }
+/* CARDS */
+.card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);
+  padding:20px;margin-bottom:16px;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--accent),var(--gold),transparent);}
 
-  /* ── TANDEM BANNER ── */
-  .tandem-banner {
-    margin: 0 auto 2rem;
-    max-width: 700px;
-    padding: 0 1rem;
-  }
-  .tandem-inner {
-    background: #fff;
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1rem 1.4rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: var(--text);
-    box-shadow: var(--shadow);
-  }
-  .tandem-inner .icon { font-size: 1.8rem; flex-shrink: 0; }
-  .tandem-inner span { font-weight: 400; color: var(--text-dim); }
+/* INTRO */
+#intro{text-align:center;padding:24px 8px;}
+#intro.hide{display:none;}
+.candle{font-size:3rem;animation:flicker .8s ease-in-out infinite alternate;}
+@keyframes flicker{0%{transform:scale(1) rotate(-1deg)}100%{transform:scale(1.04) rotate(1deg)}}
+.intro-title{font-size:1.45rem;color:var(--gold2);margin:12px 0 10px;text-shadow:0 0 20px rgba(244,191,71,.3);}
+.intro-text{color:var(--muted);font-size:.88rem;line-height:1.8;max-width:480px;margin:0 auto 20px;}
+.name-inp{background:var(--panel2);border:1.5px solid var(--accent);border-radius:var(--rs);
+  color:var(--text);font-size:1rem;font-family:'Georgia',serif;padding:11px 16px;
+  display:block;width:100%;max-width:300px;margin:0 auto 14px;text-align:center;outline:none;}
+.name-inp:focus{border-color:var(--accent2);}
+.start-btn{background:var(--accent);border:none;border-radius:var(--rs);color:#fff;
+  font-family:sans-serif;font-size:1rem;font-weight:700;padding:13px 32px;cursor:pointer;
+  letter-spacing:.8px;transition:background .2s,transform .1s;box-shadow:0 0 22px rgba(139,92,246,.4);}
+.start-btn:hover{background:var(--accent2);color:#0c0b12;}
+.start-btn:active{transform:scale(.97);}
 
-  /* ── DIFF LEGEND ── */
-  .legend {
-    display: flex;
-    justify-content: center;
-    gap: 0.6rem;
-    flex-wrap: wrap;
-    margin: 0 auto 2.5rem;
-    padding: 0 1rem;
-    max-width: 700px;
-  }
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    font-size: 0.82rem;
-    font-weight: 700;
-    padding: 0.3rem 0.8rem;
-    border-radius: 999px;
-    border: 1.5px solid;
-  }
-  .l-easy   { color: var(--s1); border-color: var(--s1); background: var(--s1-h); }
-  .l-med    { color: var(--s2); border-color: var(--s2); background: var(--s2-h); }
-  .l-hard   { color: var(--s3); border-color: var(--s3); background: var(--s3-h); }
-  .l-xhard  { color: var(--s4); border-color: var(--s4); background: var(--s4-h); }
-  .l-bonus  { color: var(--bonus); border-color: var(--bonus); background: var(--bonus-h); }
+/* RULE */
+.rule-icon{font-size:1.9rem;margin-bottom:9px;display:block;}
+.rule-title{font-size:1rem;color:var(--accent2);margin-bottom:11px;font-weight:bold;}
+.rule-body{font-family:sans-serif;font-size:.86rem;color:var(--text);line-height:1.75;}
+.rule-body strong{color:var(--gold2);}
+.rule-table{width:100%;border-collapse:collapse;margin:10px 0;font-family:sans-serif;font-size:.82rem;}
+.rule-table th{background:var(--panel2);color:var(--accent2);padding:6px 10px;border:1px solid var(--border);text-align:left;font-weight:600;}
+.rule-table td{padding:6px 10px;border:1px solid var(--border);color:var(--text);}
+.rule-table tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+.example-box{background:var(--panel2);border-left:3px solid var(--accent);border-radius:0 var(--rs) var(--rs) 0;
+  padding:9px 13px;margin:9px 0;font-style:italic;font-size:.86rem;color:var(--text);font-family:sans-serif;}
+.tag{display:inline-block;background:var(--fog);border:1px solid var(--accent);border-radius:20px;
+  padding:3px 11px;font-size:.73rem;color:var(--accent2);margin:3px 2px;font-family:sans-serif;}
+.rule-nav{width:100%;background:var(--accent);border:none;border-radius:var(--rs);color:#fff;
+  font-family:sans-serif;font-size:.88rem;font-weight:700;padding:12px;cursor:pointer;margin-top:6px;
+  letter-spacing:.5px;transition:background .2s;}
+.rule-nav:hover{background:var(--accent2);color:#0c0b12;}
 
-  /* ── GRID ── */
-  .grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.4rem;
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 0 1.2rem 3rem;
-  }
+/* TASK */
+.afb-pill{display:inline-block;float:right;background:var(--panel2);border:1px solid var(--border);
+  border-radius:20px;padding:3px 10px;font-size:.68rem;color:var(--muted);font-family:sans-serif;}
+.scene-label{display:inline-flex;align-items:center;gap:5px;background:var(--fog);border:1px solid var(--border);
+  border-radius:20px;padding:3px 12px;font-size:.73rem;color:var(--muted);margin-bottom:11px;font-family:sans-serif;}
+.story-excerpt{background:var(--panel2);border-left:3px solid var(--gold);border-radius:0 var(--rs) var(--rs) 0;
+  padding:13px 15px;margin-bottom:14px;font-size:.93rem;line-height:1.8;font-style:italic;color:var(--text);}
+.story-excerpt .gap{display:inline-block;border-bottom:2px solid var(--accent2);min-width:65px;text-align:center;
+  color:var(--gold2);font-style:normal;padding:0 3px;transition:all .3s;}
+.story-excerpt .gap.ok{border-color:var(--green);color:var(--green);}
+.story-excerpt .gap.bad{border-color:var(--red);color:var(--red);}
+.task-q{font-family:sans-serif;font-size:.82rem;color:var(--muted);margin-bottom:9px;text-transform:uppercase;letter-spacing:.7px;}
+.tip-box{background:var(--fog);border:1px solid var(--border);border-radius:var(--rs);
+  padding:8px 12px;font-family:sans-serif;font-size:.78rem;color:var(--muted);line-height:1.6;margin-bottom:12px;}
+.tip-box strong{color:var(--accent2);}
 
-  /* ── STATION CARD ── */
-  .card {
-    background: var(--surface);
-    border-radius: var(--radius);
-    border: 1.5px solid var(--border);
-    box-shadow: var(--shadow);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.18s, box-shadow 0.18s;
-  }
-  .card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(0,0,0,0.6); }
+/* WORTSPEICHER PICK CHIPS */
+.ws-pick-chip{
+  display:inline-block;background:var(--panel2);border:1.5px solid var(--border);
+  border-radius:20px;padding:5px 13px;font-size:.82rem;color:var(--muted);
+  cursor:pointer;transition:all .2s;font-family:sans-serif;
+  -webkit-tap-highlight-color:transparent;user-select:none;
+}
+.ws-pick-chip:hover{border-color:var(--accent);color:var(--accent2);}
+.ws-pick-chip.picked{
+  border-color:var(--green);background:rgba(52,211,153,.12);
+  color:var(--green);font-weight:600;
+  animation:pop .25s ease;
+}
+.ws-pick-chip.maxed:not(.picked){opacity:.35;cursor:default;}
 
-  .card-header {
-    padding: 1.1rem 1.3rem 0.9rem;
-    display: flex;
-    align-items: flex-start;
-    gap: 0.9rem;
-    border-bottom: 1.5px solid var(--border);
-  }
+/* FOCUS TRACKING OVERLAY */
+#focus-overlay{
+  display:none;position:fixed;inset:0;z-index:9999;
+  background:rgba(12,11,18,.97);
+  flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:32px;
+}
+#focus-overlay.show{display:flex;}
+.fo-icon{font-size:3rem;margin-bottom:12px;animation:flicker .8s ease-in-out infinite alternate;}
+.fo-title{font-size:1.3rem;color:var(--red);font-family:sans-serif;font-weight:700;margin-bottom:8px;}
+.fo-sub{font-size:.88rem;color:var(--muted);font-family:sans-serif;margin-bottom:20px;line-height:1.6;}
+.fo-btn{background:var(--accent);border:none;border-radius:var(--rs);color:#fff;
+  font-family:sans-serif;font-size:.92rem;font-weight:700;padding:12px 28px;cursor:pointer;}
 
-  .station-emoji {
-    font-size: 2rem;
-    line-height: 1;
-    flex-shrink: 0;
-    margin-top: 0.1rem;
-  }
+/* OPTS */
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.opt-btn{background:var(--panel2);border:1.5px solid var(--border);border-radius:var(--rs);
+  color:var(--text);font-size:.9rem;font-family:'Georgia',serif;padding:10px 8px;
+  cursor:pointer;transition:all .15s;text-align:center;-webkit-tap-highlight-color:transparent;}
+.opt-btn:active{transform:scale(.97);}
+.opt-btn:hover:not(:disabled){border-color:var(--accent);background:var(--fog);}
+.opt-btn.ok{border-color:var(--green)!important;background:rgba(52,211,153,.1)!important;color:var(--green)!important;}
+.opt-btn.bad{border-color:var(--red)!important;background:rgba(248,113,113,.1)!important;color:var(--red)!important;}
 
-  .card-meta { flex: 1; }
+/* INPUT */
+.inp-row{display:flex;gap:7px;margin-bottom:12px;}
+.txt-inp{flex:1;background:var(--panel2);border:1.5px solid var(--border);border-radius:var(--rs);
+  color:var(--text);font-size:1rem;font-family:'Georgia',serif;padding:10px 12px;outline:none;transition:border-color .15s;}
+.txt-inp:focus{border-color:var(--accent);}
+.check-btn{background:var(--accent);border:none;border-radius:var(--rs);color:#fff;
+  font-family:sans-serif;font-size:.83rem;font-weight:700;padding:10px 14px;cursor:pointer;
+  transition:background .15s,transform .1s;white-space:nowrap;}
+.check-btn:hover{background:var(--accent2);color:#0c0b12;}
+.check-btn:active{transform:scale(.97);}
 
-  .station-label {
-    font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    margin-bottom: 0.2rem;
-  }
+/* BUILDER */
+.wbank{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px;}
+.wchip{background:var(--panel2);border:1.5px solid var(--accent);border-radius:20px;
+  color:var(--accent2);padding:5px 12px;font-size:.86rem;font-family:'Georgia',serif;
+  cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;}
+.wchip:hover:not(.used){background:var(--fog);}
+.wchip.used{opacity:.2;cursor:default;pointer-events:none;}
+.slots{min-height:44px;background:var(--panel2);border:1.5px dashed var(--border);border-radius:var(--rs);
+  padding:8px 11px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:9px;}
+.pchip{background:var(--fog);border:1px solid var(--accent2);border-radius:20px;
+  color:var(--accent2);padding:4px 10px;font-size:.86rem;font-family:'Georgia',serif;cursor:pointer;}
+.pchip:hover{border-color:var(--red);color:var(--red);}
+.slot-hint{color:var(--muted);font-style:italic;font-size:.83rem;}
+.builder-btns{display:flex;gap:7px;margin-bottom:11px;}
+.reset-btn{background:var(--panel2);border:1px solid var(--border);border-radius:var(--rs);
+  color:var(--muted);font-family:sans-serif;font-size:.8rem;padding:9px 13px;cursor:pointer;}
 
-  .card-title {
-    font-size: 1.15rem;
-    font-weight: 900;
-    line-height: 1.2;
-    color: var(--text);
-  }
+/* 10-VERB TRAINER */
+.verb-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.verb-row{display:flex;align-items:center;gap:7px;background:var(--panel2);border:1px solid var(--border);border-radius:var(--rs);padding:8px 10px;}
+.verb-label{font-family:sans-serif;font-size:.8rem;color:var(--muted);min-width:90px;flex-shrink:0;}
+.verb-inp{flex:1;background:transparent;border:none;border-bottom:1.5px solid var(--border);
+  color:var(--text);font-family:'Georgia',serif;font-size:.9rem;padding:3px 4px;outline:none;
+  transition:border-color .15s;width:0;}
+.verb-inp:focus{border-color:var(--accent);}
+.verb-inp.ok{border-color:var(--green);color:var(--green);}
+.verb-inp.bad{border-color:var(--red);color:var(--red);}
+.verb-check-icon{font-size:.9rem;min-width:16px;}
+.verb-trainer-submit{width:100%;background:var(--accent);border:none;border-radius:var(--rs);color:#fff;
+  font-family:sans-serif;font-size:.88rem;font-weight:700;padding:11px;cursor:pointer;margin-bottom:11px;}
+.verb-trainer-submit:hover{background:var(--accent2);color:#0c0b12;}
 
-  .diff-badge {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    font-size: 0.75rem;
-    font-weight: 800;
-    padding: 0.25rem 0.65rem;
-    border-radius: 999px;
-    flex-shrink: 0;
-    border: 1.5px solid;
-    white-space: nowrap;
-    margin-top: 0.1rem;
-  }
+/* WRITE */
+.story-starter{background:var(--panel2);border:1px solid var(--gold);border-radius:var(--rs);
+  padding:14px;margin-bottom:12px;font-size:.93rem;line-height:1.8;font-style:italic;color:var(--text);}
+.story-starter span{color:var(--gold2);font-weight:bold;font-style:normal;}
+.word-treasury{background:var(--panel2);border:1px solid var(--border);border-radius:var(--rs);padding:11px 13px;margin-bottom:11px;}
+.treasury-title{font-family:sans-serif;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:7px;}
+.wt-section{margin-bottom:7px;}
+.wt-label{font-family:sans-serif;font-size:.7rem;color:var(--accent2);margin-bottom:3px;}
+.wt-chips{display:flex;flex-wrap:wrap;gap:4px;}
+.wt-chip{background:transparent;border:1px solid var(--border);border-radius:20px;
+  padding:3px 10px;font-size:.76rem;color:var(--muted);cursor:pointer;transition:all .15s;font-family:sans-serif;}
+.wt-chip:hover{border-color:var(--accent);color:var(--accent2);}
+.wt-chip.picked{border-color:var(--accent);background:var(--fog);color:var(--accent2);}
+.write-area{width:100%;min-height:170px;background:var(--panel2);border:1.5px solid var(--border);
+  border-radius:var(--rs);color:var(--text);font-family:'Georgia',serif;font-size:.93rem;
+  padding:13px;line-height:1.85;resize:vertical;outline:none;transition:border-color .15s;}
+.write-area:focus{border-color:var(--accent);}
+.write-meta{display:flex;justify-content:space-between;align-items:center;margin:7px 0 11px;
+  font-family:sans-serif;font-size:.76rem;color:var(--muted);}
+#word-count{color:var(--accent2);}
+.sent-count{color:var(--muted);}
+.sent-count.enough{color:var(--green);}
 
-  /* Farben pro Station */
-  .s1 .station-label, .s1 .dot { color: var(--s1); }
-  .s1 .card-header { border-bottom-color: var(--s1-h); }
-  .s1 .diff-badge { color: var(--s1); border-color: var(--s1); background: var(--s1-h); }
-  .s1 .task-num { background: var(--s1); }
-  .s1 .heft-strip { border-left-color: var(--s1); }
+/* SPRINT */
+.sprint-card{background:var(--panel);border:1px solid var(--orange);border-radius:var(--r);
+  padding:20px;margin-bottom:16px;position:relative;overflow:hidden;}
+.sprint-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--orange),var(--gold),transparent);}
+.sprint-badge{display:inline-block;background:rgba(251,146,60,.12);border:1px solid var(--orange);
+  border-radius:20px;padding:3px 12px;font-size:.7rem;color:var(--orange);margin-bottom:10px;font-family:sans-serif;}
 
-  .s2 .station-label, .s2 .dot { color: var(--s2); }
-  .s2 .card-header { border-bottom-color: var(--s2-h); }
-  .s2 .diff-badge { color: var(--s2); border-color: var(--s2); background: var(--s2-h); }
-  .s2 .task-num { background: var(--s2); }
-  .s2 .heft-strip { border-left-color: var(--s2); }
+/* FEEDBACK */
+.fb-box{border-radius:var(--rs);padding:10px 13px;font-family:sans-serif;font-size:.85rem;
+  line-height:1.6;margin-bottom:11px;display:none;}
+.fb-box.show{display:block;}
+.fb-box.ok{background:rgba(52,211,153,.08);border:1px solid var(--green);color:var(--green);}
+.fb-box.bad{background:rgba(248,113,113,.08);border:1px solid var(--red);color:var(--red);}
+.fb-box.neutral{background:var(--fog);border:1px solid var(--accent);color:var(--accent2);}
 
-  .s3 .station-label, .s3 .dot { color: var(--s3); }
-  .s3 .card-header { border-bottom-color: var(--s3-h); }
-  .s3 .diff-badge { color: var(--s3); border-color: var(--s3); background: var(--s3-h); }
-  .s3 .task-num { background: var(--s3); }
-  .s3 .heft-strip { border-left-color: var(--s3); }
+/* NEXT */
+.next-btn{display:none;width:100%;background:transparent;border:2px solid var(--gold);
+  border-radius:var(--rs);color:var(--gold2);font-family:sans-serif;font-size:.86rem;
+  font-weight:700;padding:12px;cursor:pointer;letter-spacing:.7px;transition:background .2s;}
+.next-btn.show{display:block;}
+.next-btn:hover{background:rgba(244,191,71,.08);}
 
-  .s4 .station-label, .s4 .dot { color: var(--s4); }
-  .s4 .card-header { border-bottom-color: var(--s4-h); }
-  .s4 .diff-badge { color: var(--s4); border-color: var(--s4); background: var(--s4-h); }
-  .s4 .task-num { background: var(--s4); }
-  .s4 .heft-strip { border-left-color: var(--s4); }
-
-  .s5 .station-label, .s5 .dot { color: var(--bonus); }
-  .s5 .card-header { border-bottom-color: var(--bonus-h); }
-  .s5 .diff-badge { color: var(--bonus); border-color: var(--bonus); background: var(--bonus-h); }
-  .s5 .task-num { background: var(--bonus); }
-  .s5 .heft-strip { border-left-color: var(--bonus); }
-
-  /* ── CARD BODY ── */
-  .card-body {
-    padding: 1.1rem 1.3rem;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  /* Aufgaben */
-  .tasks { display: flex; flex-direction: column; gap: 0.75rem; }
-
-  .task {
-    display: flex;
-    gap: 0.7rem;
-    align-items: flex-start;
-  }
-
-  .task-num {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.72rem;
-    font-weight: 900;
-    color: #fff;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-
-  .task-text {
-    font-size: 0.9rem;
-    line-height: 1.55;
-    color: var(--text);
-    font-weight: 600;
-  }
-
-  .task-text em {
-    font-style: italic;
-    color: var(--text-dim);
-    font-weight: 400;
-  }
-
-  .task-text strong { font-weight: 900; }
-
-  /* Heft-Hinweis */
-  .heft-strip {
-    background: var(--surface2);
-    border-left: 3px solid;
-    border-radius: 0 8px 8px 0;
-    padding: 0.6rem 0.9rem;
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: var(--text-dim);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-top: auto;
-  }
-  .heft-strip .heft-icon { font-size: 1rem; }
-
-  /* Beispiel-Box */
-  .beispiel {
-    background: var(--surface2);
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
-    font-size: 0.88rem;
-    color: var(--text);
-    border: 1px solid var(--border);
-  }
-  .beispiel strong { color: var(--text-dim); display: block; margin-bottom: 0.3rem; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; }
-  .beispiel p { font-style: italic; line-height: 1.55; color: #2a2520; }
-
-  /* Diff dots */
-  .diff-dots { display: flex; gap: 3px; margin-top: 4px; }
-  .dot { font-size: 0.6rem; }
-
-  /* single column layout - no span needed */
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 640px) {
-    header h1 { font-size: 2rem; }
-  }
-
-  /* ── ENTER ANIMATION ── */
-  .card {
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeUp 0.4s ease forwards;
-  }
-  .card:nth-child(1) { animation-delay: 0.05s; }
-  .card:nth-child(2) { animation-delay: 0.12s; }
-  .card:nth-child(3) { animation-delay: 0.19s; }
-  .card:nth-child(4) { animation-delay: 0.26s; }
-  .card:nth-child(5) { animation-delay: 0.33s; }
-
-  @keyframes fadeUp {
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* Progress indicator */
-  .progress-bar {
-    max-width: 700px;
-    margin: 0 auto 2rem;
-    padding: 0 1rem;
-  }
-  .progress-label {
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: var(--text-dim);
-    margin-bottom: 0.4rem;
-    display: flex;
-    justify-content: space-between;
-  }
-  .progress-track {
-    height: 6px;
-    background: var(--border);
-    border-radius: 999px;
-    display: flex;
-    gap: 4px;
-    overflow: hidden;
-  }
-  .progress-seg {
-    flex: 1;
-    border-radius: 999px;
-    opacity: 0.35;
-    transition: opacity 0.3s;
-    cursor: pointer;
-  }
-  .progress-seg.done { opacity: 1; }
-  .progress-seg.s1c { background: var(--s1); }
-  .progress-seg.s2c { background: var(--s2); }
-  .progress-seg.s3c { background: var(--s3); }
-  .progress-seg.s4c { background: var(--s4); }
-  .progress-seg.s5c { background: var(--bonus); }
-
-  .card.done-card {
-    opacity: 0.6;
-  }
-  .card.done-card .card-header::after {
-    content: '✓ Fertig';
-    font-size: 0.78rem;
-    font-weight: 800;
-    color: var(--s2);
-    margin-left: auto;
-  }
-
-  .done-btn {
-    width: 100%;
-    margin-top: 0.5rem;
-    padding: 0.6rem;
-    border-radius: 8px;
-    border: 1.5px solid var(--border);
-    background: transparent;
-    color: var(--text-dim);
-    font-family: 'Nunito', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 800;
-    cursor: pointer;
-    transition: all 0.18s;
-    letter-spacing: 0.04em;
-  }
-  .done-btn:hover { border-color: var(--s2); color: var(--s2); }
-  .done-btn.marked { background: var(--s2-h); border-color: var(--s2); color: var(--s2); }
+/* END */
+#end-screen{display:none;text-align:center;padding:24px 10px;}
+#end-screen.show{display:block;}
+.end-medal{font-size:3.2rem;margin-bottom:7px;}
+.end-stars{font-size:1.9rem;letter-spacing:5px;margin-bottom:11px;}
+.end-title{font-size:1.35rem;color:var(--gold2);margin-bottom:5px;}
+.end-sub{color:var(--muted);font-size:.86rem;margin-bottom:20px;}
+.sum-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:14px 0;text-align:left;}
+.sum-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--rs);padding:12px;}
+.sum-lb{font-size:.7rem;color:var(--muted);font-family:sans-serif;margin-bottom:2px;}
+.sum-vl{font-size:1.15rem;color:var(--gold2);font-weight:700;}
+.restart-btn{background:var(--accent);border:none;border-radius:var(--rs);color:#fff;
+  font-family:sans-serif;font-size:.92rem;font-weight:700;padding:12px 28px;cursor:pointer;margin-top:8px;}
+.restart-btn:hover{background:var(--accent2);color:#0c0b12;}
+#story-display{text-align:left;margin-top:12px;}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.12)}100%{transform:scale(1)}}
+.popit{animation:pop .3s ease;}
 </style>
 </head>
 <body>
+<div id="particles"></div>
+<div id="app">
+  <div class="game-header">
+    <h1>🕯️ Das Geheimnis von Dunkelwald</h1>
+    <div class="sub">Präteritum &amp; geheimnisvolle Geschichten — Klasse 6</div>
+  </div>
 
-<header>
-  <p class="header-eyebrow">Deutsch · Klasse 6 · Lerntheke</p>
-  <h1>👻 Geheimnisvolle Geschichten</h1>
-  <p class="header-sub">Wähle mindestens 3 Stationen · Schreibe alles ins Heft</p>
-</header>
+  <div id="intro">
+    <div class="candle">🕯️</div>
+    <div class="intro-title">Willkommen im Dunkelwald!</div>
+    <div class="intro-text">
+      Ein altes Haus. Eine dunkle Nacht. Seltsame Geräusche.<br>
+      Lerne das <strong style="color:var(--gold2)">Präteritum</strong> — die Zeitform der Erzählungen —<br>und schreibe am Ende deine eigene geheimnisvolle Geschichte.
+    </div>
+    <input class="name-inp" id="pname" type="text" placeholder="Dein Name …" maxlength="20">
+    <button class="start-btn" onclick="startGame()">🕯️ Das Abenteuer beginnt …</button>
+  </div>
 
-<!-- Legend -->
-<div class="legend">
-  <div class="legend-item l-easy">⬤ Leicht</div>
-  <div class="legend-item l-med">⬤ Mittel</div>
-  <div class="legend-item l-hard">⬤ Mittel-schwer</div>
-  <div class="legend-item l-xhard">⬤ Schwer</div>
-  <div class="legend-item l-bonus">★ Bonus</div>
+  <div id="hud">
+    <div class="hud-it"><span class="hud-lb">Name:</span><span class="hud-vl" id="hud-name">—</span></div>
+    <div class="hud-it"><span class="hud-lb">Punkte:</span><span class="hud-vl" id="hud-score">0</span></div>
+    <div class="hud-it"><span class="hud-lb">Leben:</span><div class="hearts" id="hearts-wrap"></div></div>
+    <div id="pbar-wrap"><div id="pbar" style="width:0%"></div></div>
+    <div class="hud-it"><span class="hud-vl" id="hud-cur">1</span><span class="hud-lb"> / </span><span class="hud-lb" id="hud-tot">?</span></div>
+  </div>
+
+  <div id="game-area" style="display:none;"></div>
+
+  <div id="end-screen">
+    <div class="end-medal" id="e-medal"></div>
+    <div class="end-stars" id="e-stars"></div>
+    <div class="end-title" id="e-title"></div>
+    <div class="end-sub" id="e-sub"></div>
+    <div class="sum-grid">
+      <div class="sum-card"><div class="sum-lb">Punkte</div><div class="sum-vl" id="s-pts">—</div></div>
+      <div class="sum-card"><div class="sum-lb">Richtig</div><div class="sum-vl" id="s-cor">—</div></div>
+      <div class="sum-card"><div class="sum-lb">Geschichte</div><div class="sum-vl">✍️ Verfasst!</div></div>
+      <div class="sum-card"><div class="sum-lb">Level</div><div class="sum-vl" id="s-lvl">—</div></div>
+    </div>
+    <div id="story-display" class="card" style="display:none;">
+      <div class="rule-title">📖 Deine Geschichte:</div>
+      <div id="story-output" style="font-family:'Georgia',serif;font-size:.93rem;line-height:1.9;color:var(--text);white-space:pre-wrap;"></div>
+    </div>
+
+    <!-- ABGABE-BEREICH -->
+    <div id="submit-area" style="margin-top:16px;background:var(--panel);border:1px solid var(--accent);border-radius:var(--r);padding:18px;text-align:center;">
+      <div style="font-family:sans-serif;font-size:.85rem;color:var(--accent2);font-weight:700;margin-bottom:6px;">📤 Ergebnis abgeben</div>
+      <div style="font-family:sans-serif;font-size:.78rem;color:var(--muted);margin-bottom:14px;line-height:1.5;">Tippe auf den Button — deine Lehrerin / dein Lehrer sieht dein Ergebnis dann in der Übersicht.</div>
+      <button id="submit-btn" onclick="submitResult()" style="background:var(--accent);border:none;border-radius:var(--rs);color:#fff;font-family:sans-serif;font-size:.92rem;font-weight:700;padding:13px 28px;cursor:pointer;width:100%;transition:background .2s;">
+        📤 Jetzt abgeben
+      </button>
+      <div id="submit-status" style="margin-top:10px;font-family:sans-serif;font-size:.82rem;display:none;"></div>
+    </div>
+
+    <button class="restart-btn" onclick="restartGame()">🔄 Nochmal spielen</button>
+  </div>
 </div>
 
-<!-- Progress -->
-<div class="progress-bar">
-  <div class="progress-label">
-    <span>Euer Fortschritt</span>
-    <span id="progress-count">0 von 4 Pflicht-Stationen</span>
-  </div>
-  <div class="progress-track">
-    <div class="progress-seg s1c" id="p1" onclick="toggleDone(1)"></div>
-    <div class="progress-seg s2c" id="p2" onclick="toggleDone(2)"></div>
-    <div class="progress-seg s3c" id="p3" onclick="toggleDone(3)"></div>
-    <div class="progress-seg s4c" id="p4" onclick="toggleDone(4)"></div>
-    <div class="progress-seg s5c" id="p5" onclick="toggleDone(5)"></div>
-  </div>
-</div>
+<!-- FIXED NAV BAR -->
+<div id="nav-bar"><div class="nav-inner" id="nav-inner"></div></div>
 
-<!-- STATIONEN GRID -->
-<div class="grid">
-
-  <!-- STATION 1 – CLUSTER (Leicht) -->
-  <div class="card s1" id="card1">
-    <div class="card-header">
-      <div class="station-emoji">🧠</div>
-      <div class="card-meta">
-        <div class="station-label">Station 1 · Pflicht</div>
-        <div class="card-title">Cluster – Ideen sammeln</div>
-        <div class="diff-dots"><span class="dot">⬤</span></div>
-      </div>
-      <div class="diff-badge">⬤ Leicht</div>
-    </div>
-    <div class="card-body">
-      <div class="tasks">
-        <div class="task">
-          <div class="task-num">a</div>
-          <div class="task-text">
-            Zeichne ein Cluster zum Wort <strong>DUNKELHEIT</strong> ins Heft.
-            Schreibt mindestens <strong>8 Wörter</strong> drum herum –
-            <em>Gefühle, Geräusche, Bilder, Farben.</em>
-          </div>
-        </div>
-        <div class="task">
-          <div class="task-num">b</div>
-          <div class="task-text">
-            Zweites Cluster: <strong>VERLASSENES HAUS</strong>.
-            Was seht ihr? Hört ihr? Riecht ihr? Fühlt ihr?
-          </div>
-        </div>
-      </div>
-      <div class="beispiel">
-        <strong>💡 Tipp</strong>
-        <p>Euer Cluster ist euer persönlicher Wortspeicher – nutzt ihn in Station 3!</p>
-      </div>
-      <div class="heft-strip">
-        <span class="heft-icon">📓</span>
-        Ins Heft: Cluster zeichnen + beschriften
-      </div>
-      <button class="done-btn" onclick="toggleDone(1)" id="btn1">✓ Station abgehakt</button>
-    </div>
-  </div>
-
-  <!-- STATION 2 – PRÄTERITUM (Mittel) -->
-  <div class="card s2" id="card2">
-    <div class="card-header">
-      <div class="station-emoji">⏱️</div>
-      <div class="card-meta">
-        <div class="station-label">Station 2 · Pflicht</div>
-        <div class="card-title">Präteritum – Formen trainieren</div>
-        <div class="diff-dots"><span class="dot">⬤</span><span class="dot">⬤</span></div>
-      </div>
-      <div class="diff-badge">⬤⬤ Mittel</div>
-    </div>
-    <div class="card-body">
-      <div class="tasks">
-        <div class="task">
-          <div class="task-num">a</div>
-          <div class="task-text">
-            Schreibt die <strong>Präteritum-Form</strong> (er/sie/es) ins Heft:
-            <em>gehen · stehen · sehen · halten · sein · schleichen · knarren · flüstern · erstarren · haben</em>
-          </div>
-        </div>
-        <div class="task">
-          <div class="task-num">b</div>
-          <div class="task-text">
-            Schreibt den folgenden Text <strong>vollständig ins Präteritum</strong> um
-            und korrigiert dabei die 5 Fehler:
-          </div>
-        </div>
-      </div>
-      <div class="beispiel">
-        <strong>📖 Fehlertext</strong>
-        <p>„Es <u>ist</u> eine dunkle Nacht. Emma <u>geht</u> langsam auf die alte Hütte zu. Plötzlich <u>knarrt</u> die Tür. Sie <u>bleibt</u> stehen und <u>hält</u> den Atem an. Ein kalter Wind wehte durch die Bäume."</p>
-      </div>
-      <div class="heft-strip">
-        <span class="heft-icon">📓</span>
-        Ins Heft: Tabelle + korrigierter Text
-      </div>
-      <button class="done-btn" onclick="toggleDone(2)" id="btn2">✓ Station abgehakt</button>
-    </div>
-  </div>
-
-  <!-- STATION 3 – GESCHICHTE SCHREIBEN (Mittel-schwer) -->
-  <div class="card s3 span-full" id="card3">
-    <div class="card-header">
-      <div class="station-emoji">✍️</div>
-      <div class="card-meta">
-        <div class="station-label">Station 3 · Pflicht · Hauptaufgabe</div>
-        <div class="card-title">Geschichte weiterschreiben</div>
-        <div class="diff-dots"><span class="dot">⬤</span><span class="dot">⬤</span><span class="dot">⬤</span></div>
-      </div>
-      <div class="diff-badge">⬤⬤⬤ Mittel-schwer</div>
-    </div>
-    <div class="card-body">
-      <div class="beispiel">
-        <strong>📖 Euer Anfang – lest ihn laut vor</strong>
-        <p>„Es war schon spät, als Nele allein durch den Park ging. Die Laternen flimmerten schwach im Nebel. Irgendwo knackte ein Ast – einmal, dann noch einmal. Nele blieb stehen und lauschte. Da, zwischen den Bäumen, sah sie es: einen schwachen Lichtschein, der aus einem verlassenen Gebäudeeingang drang."</p>
-      </div>
-      <div class="tasks">
-        <div class="task">
-          <div class="task-num">a</div>
-          <div class="task-text">
-            Überlege: <strong>Was könnte als nächstes passieren?</strong>
-            Notiert 3 Ideen für die Steigerung und 1 Idee für den Höhepunkt.
-          </div>
-        </div>
-        <div class="task">
-          <div class="task-num">b</div>
-          <div class="task-text">
-            Schreibt die Geschichte <strong>alleine</strong> weiter
-            (<strong>mind. 100 Wörter</strong>, Präteritum, mind. 4 Wörter aus eurem Cluster).
-            Steigerung + Höhepunkt müssen erkennbar sein.
-          </div>
-        </div>
-        <div class="task">
-          <div class="task-num">c</div>
-          <div class="task-text">
-            Lest euren Text noch einmal durch und markiert:
-            <strong>Eine Stelle, die Spannung erzeugt – und warum.</strong>
-          </div>
-        </div>
-      </div>
-      <div class="heft-strip">
-        <span class="heft-icon">📓</span>
-        Ins Heft: 3 Ideen (a) · eigene Geschichte (b) · markierte Spannungsstelle (c)
-      </div>
-      <button class="done-btn" onclick="toggleDone(3)" id="btn3">✓ Station abgehakt</button>
-    </div>
-  </div>
-
-  <!-- STATION 4 – RECHTSCHREIBUNG (Schwer) -->
-  <div class="card s4" id="card4">
-    <div class="card-header">
-      <div class="station-emoji">🔍</div>
-      <div class="card-meta">
-        <div class="station-label">Station 4 · Pflicht</div>
-        <div class="card-title">Rechtschreibung – Detektiv</div>
-        <div class="diff-dots"><span class="dot">⬤</span><span class="dot">⬤</span><span class="dot">⬤</span><span class="dot">⬤</span></div>
-      </div>
-      <div class="diff-badge">⬤⬤⬤⬤ Schwer</div>
-    </div>
-    <div class="card-body">
-      <div class="tasks">
-        <div class="task">
-          <div class="task-num">a</div>
-          <div class="task-text">
-            Findet und korrigiert <strong>alle Fehler</strong> (Groß-/Kleinschreibung).
-            Schreibt den Text korrekt ins Heft:
-          </div>
-        </div>
-      </div>
-      <div class="beispiel">
-        <strong>📖 Fehlertext</strong>
-        <p>„Leon und mia standen vor dem alten Haus. ein kalter wind strich über ihre gesichter. Plötzlich hörten sie ein Knarren – laut und langsam, wie das ächzen eines alten baumes. Mia Griff nach Leons arm."</p>
-      </div>
-      <div class="tasks">
-        <div class="task">
-          <div class="task-num">b</div>
-          <div class="task-text">
-            Ergänzt die <strong>fehlenden Satzzeichen</strong> und schreibt die Sätze korrekt auf:
-            <em>„Die Tür war offen ein schwacher Lichtschein drang heraus" · „Plötzlich hörte sie ein Geräusch war da jemand" · „Lauf rief Tom sofort lauf" · „Es war dunkel kalt und völlig still"</em>
-          </div>
-        </div>
-      </div>
-      <div class="heft-strip">
-        <span class="heft-icon">📓</span>
-        Ins Heft: Korrigierter Text (a) + 4 Sätze mit Satzzeichen (b)
-      </div>
-      <button class="done-btn" onclick="toggleDone(4)" id="btn4">✓ Station abgehakt</button>
-    </div>
-  </div>
-
-  <!-- STATION 5 – BONUS: SHOW DON'T TELL -->
-  <div class="card s5" id="card5">
-    <div class="card-header">
-      <div class="station-emoji">⭐</div>
-      <div class="card-meta">
-        <div class="station-label">Station 5 · Bonus – nur wenn ihr Zeit habt!</div>
-        <div class="card-title">Stimmung zeigen – nicht sagen</div>
-        <div class="diff-dots"><span class="dot" style="color:var(--bonus)">★</span></div>
-      </div>
-      <div class="diff-badge">★ Bonus</div>
-    </div>
-    <div class="card-body">
-      <div class="beispiel">
-        <strong>💡 Das Prinzip: „Show, don't tell"</strong>
-        <p>Statt: „Es war gruselig." → Besser: „Die Dielen knarrten unter jedem Schritt."<br>
-        Statt: „Er hatte Angst." → Besser: „Sein Herz hämmerte bis in die Kehle."</p>
-      </div>
-      <div class="tasks">
-        <div class="task">
-          <div class="task-num">a</div>
-          <div class="task-text">
-            Schreibt jeden Satz so um, dass <strong>Stimmung entsteht, ohne das Gefühl zu nennen</strong>:
-            <em>„Es war sehr gruselig." · „Tom hatte große Angst." · „Es war sehr dunkel." · „Plötzlich passierte etwas Seltsames."</em>
-          </div>
-        </div>
-        <div class="task">
-          <div class="task-num">b</div>
-          <div class="task-text">
-            Schreibt einen <strong>Spannungsmoment (5–8 Sätze)</strong>: Ein langer dunkler Schulflur bei Nacht. Eine Tür steht einen Spalt offen. Am Ende ein schwaches Licht.
-          </div>
-        </div>
-      </div>
-      <div class="heft-strip">
-        <span class="heft-icon">📓</span>
-        Ins Heft: 4 umgeschriebene Sätze (a) + Spannungsmoment (b)
-      </div>
-      <button class="done-btn" onclick="toggleDone(5)" id="btn5">✓ Station abgehakt</button>
-    </div>
-  </div>
-
+<!-- FOCUS TRACKING OVERLAY -->
+<div id="focus-overlay">
+  <div class="fo-icon">👁️</div>
+  <div class="fo-title">Du warst weg!</div>
+  <div class="fo-sub" id="fo-sub">Das Spiel hat bemerkt, dass du die Seite verlassen hast.<br>Deine Lehrerin / dein Lehrer sieht das im Ergebnis.</div>
+  <button class="fo-btn" onclick="dismissFocusOverlay()">🔙 Zurück zum Spiel</button>
 </div>
 
 <script>
-  const done = new Set();
+/* PARTICLES */
+(function(){
+  const p=document.getElementById('particles');
+  [['rgba(139,92,246,.12)',300,300,'18s'],['rgba(88,28,135,.10)',500,200,'22s'],['rgba(245,158,11,.07)',200,400,'26s']].forEach(([c,x,y,d])=>{
+    const o=document.createElement('div');o.className='orb';
+    o.style.cssText=`width:240px;height:240px;background:${c};left:${x}px;top:${y}px;animation-duration:${d}`;p.appendChild(o);
+  });
+  for(let i=0;i<60;i++){
+    const s=document.createElement('div');s.className='star2';const sz=Math.random()*2+.5;
+    s.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;animation-duration:${(Math.random()*4+2).toFixed(1)}s;animation-delay:${(Math.random()*5).toFixed(1)}s`;
+    p.appendChild(s);
+  }
+})();
 
-  function toggleDone(n) {
-    const card = document.getElementById('card' + n);
-    const seg  = document.getElementById('p' + n);
-    const btn  = document.getElementById('btn' + n);
+/* ════════════════════════════════════════════
+   SCREEN DEFINITIONS
+════════════════════════════════════════════ */
+const SCREENS=[
 
-    if (done.has(n)) {
-      done.delete(n);
-      card.classList.remove('done-card');
-      seg.classList.remove('done');
-      btn.classList.remove('marked');
-      btn.textContent = '✓ Station abgehakt';
-    } else {
-      done.add(n);
-      card.classList.add('done-card');
-      seg.classList.add('done');
-      btn.classList.add('marked');
-      btn.textContent = '✓ Erledigt!';
+/* 0 ── REGEL 1: Was ist das Präteritum? */
+{type:'rule',id:'r1',navIcon:'📖',navLabel:'Regel 1',
+render(){return `<div class="card">
+<span class="rule-icon">📖</span>
+<div class="rule-title">Das Präteritum — die Erzählzeit</div>
+<div class="rule-body">
+Wenn du eine Geschichte schreibst, benutzt du das <strong>Präteritum</strong> (auch: Imperfekt).
+Es beschreibt vergangene Ereignisse — besonders in geschriebenen Texten und Büchern.
+<div class="example-box">„Die Tür <strong>knarrte</strong>. Emma <strong>hielt</strong> die Kerze fest und <strong>trat</strong> ins Zimmer."</div>
+Vergleiche Präsens und Präteritum:
+<table class="rule-table" style="margin-top:9px">
+  <tr><th>Präsens (Gespräch)</th><th>Präteritum (Erzählung)</th></tr>
+  <tr><td>Er geht ins Haus.</td><td>Er <strong>ging</strong> ins Haus.</td></tr>
+  <tr><td>Sie sieht etwas.</td><td>Sie <strong>sah</strong> etwas.</td></tr>
+  <tr><td>Es ist dunkel.</td><td>Es <strong>war</strong> dunkel.</td></tr>
+  <tr><td>Er macht die Tür auf.</td><td>Er <strong>machte</strong> die Tür auf.</td></tr>
+</table>
+<strong>Merke:</strong> In Geschichten klingt das Präteritum natürlicher und spannender als das Präsens!
+</div></div>`;}},
+
+/* 1 ── REGEL 2: Schwache Verben */
+{type:'rule',id:'r2',navIcon:'🔵',navLabel:'Regel 2',
+render(){return `<div class="card">
+<span class="rule-icon">🔵</span>
+<div class="rule-title">Schwache Verben im Präteritum</div>
+<div class="rule-body">
+<strong>Schwache Verben</strong> sind regelmäßig: <strong>Stamm + -te + Endung</strong>
+<div class="example-box">mach-en → er mach<strong>te</strong> &nbsp;|&nbsp; hör-en → sie hör<strong>te</strong> &nbsp;|&nbsp; öffn-en → er öffne<strong>te</strong></div>
+<table class="rule-table">
+  <tr><th>Person</th><th>Endung</th><th>Beispiel: „flüstern"</th></tr>
+  <tr><td>ich</td><td>-te</td><td>ich flüsterte</td></tr>
+  <tr><td>du</td><td>-test</td><td>du flüstertest</td></tr>
+  <tr><td>er/sie/es</td><td>-te</td><td>er flüsterte</td></tr>
+  <tr><td>wir</td><td>-ten</td><td>wir flüsterten</td></tr>
+  <tr><td>ihr</td><td>-tet</td><td>ihr flüstertet</td></tr>
+  <tr><td>sie/Sie</td><td>-ten</td><td>sie flüsterten</td></tr>
+</table>
+<strong>Tipp:</strong> Schwache Verben erkennst du im Präteritum immer am <strong>-te</strong>!
+</div></div>`;}},
+
+/* 2 ── REGEL 3: Starke Verben */
+{type:'rule',id:'r3',navIcon:'🔴',navLabel:'Regel 3',
+render(){return `<div class="card">
+<span class="rule-icon">🔴</span>
+<div class="rule-title">Starke Verben — Vokalwechsel!</div>
+<div class="rule-body">
+<strong>Starke Verben</strong> ändern ihren Vokal — kein -te!
+<div class="example-box"><strong>Vokalwechsel:</strong> geh-en → <strong>ging</strong> &nbsp;|&nbsp; seh-en → <strong>sah</strong> &nbsp;|&nbsp; lauf-en → <strong>lief</strong></div>
+<table class="rule-table">
+  <tr><th>Infinitiv</th><th>Präteritum er/sie</th><th>Infinitiv</th><th>Präteritum er/sie</th></tr>
+  <tr><td>gehen</td><td><strong>ging</strong></td><td>schreiben</td><td><strong>schrieb</strong></td></tr>
+  <tr><td>sehen</td><td><strong>sah</strong></td><td>finden</td><td><strong>fand</strong></td></tr>
+  <tr><td>kommen</td><td><strong>kam</strong></td><td>laufen</td><td><strong>lief</strong></td></tr>
+  <tr><td>stehen</td><td><strong>stand</strong></td><td>rufen</td><td><strong>rief</strong></td></tr>
+  <tr><td>schlafen</td><td><strong>schlief</strong></td><td>nehmen</td><td><strong>nahm</strong></td></tr>
+</table>
+<strong>Wichtig:</strong> Diese Verben sind in Geschichten sehr häufig — lerne sie auswendig!
+</div></div>`;}},
+
+/* 3 ── AFB 1: Präteritum erkennen MC */
+{type:'task',afb:1,id:'t1',points:10,navIcon:'⚡',navLabel:'Aufg. 1',
+correct:0,gapId:'g1',gapAnswer:'stieg',
+fbOk:'Richtig! „stieg" ist das Präteritum von „steigen" — Vokalwechsel ei → ie. Typisch für starke Verben!',
+fbBad:'Leider nicht. „steigen" ist ein starkes Verb: ei → ie. Das Präteritum heißt „stieg" — kein -te!',
+render(){return `<div class="card">
+<span class="afb-pill">AFB 1 — Erkennen</span>
+<div class="scene-label">🌑 Dunkelwald, Mitternacht</div>
+<div class="story-excerpt">„Emma <span class="gap" id="g1">___</span> vorsichtig die knarrende Treppe hinauf."</div>
+<div class="tip-box">💡 <strong>Schau aufs Muster:</strong> Starke Verben ändern den Vokal im Stamm — kein -te!</div>
+<div class="task-q">Welches Wort gehört in die Lücke? (Präteritum von „steigen")</div>
+<div class="opts" id="opts">
+  <button class="opt-btn" onclick="checkMC(this,0)">stieg</button>
+  <button class="opt-btn" onclick="checkMC(this,1)">stiegte</button>
+  <button class="opt-btn" onclick="checkMC(this,2)">steigt</button>
+  <button class="opt-btn" onclick="checkMC(this,3)">gestiegen</button>
+</div>
+<div class="fb-box" id="fb"></div>
+<button class="next-btn" id="nb" onclick="nextScreen()">➤ Weiter …</button>
+</div>`;}},
+
+/* 4 ── AFB 1: MC kommen */
+{type:'task',afb:1,id:'t2',points:10,navIcon:'⚡',navLabel:'Aufg. 2',
+correct:1,gapId:'g2',gapAnswer:'kam',
+fbOk:'Super! „kam" ist das Präteritum von „kommen" — Vokalwechsel o → a. Perfekt für gruselige Erzählungen!',
+fbBad:'Leider falsch. „kommen" wechselt den Vokal: o → a. Das Präteritum heißt „kam" — kein -te!',
+render(){return `<div class="card">
+<span class="afb-pill">AFB 1 — Erkennen</span>
+<div class="scene-label">🏚️ Das alte Haus</div>
+<div class="story-excerpt">„Plötzlich <span class="gap" id="g2">___</span> ein seltsames Geräusch aus dem Keller."</div>
+<div class="tip-box">💡 <strong>„kommen"</strong> ist ein starkes Verb: o → a im Präteritum.</div>
+<div class="task-q">Welches ist das Präteritum von „kommen"?</div>
+<div class="opts" id="opts">
+  <button class="opt-btn" onclick="checkMC(this,0)">kommte</button>
+  <button class="opt-btn" onclick="checkMC(this,1)">kam</button>
+  <button class="opt-btn" onclick="checkMC(this,2)">kommt</button>
+  <button class="opt-btn" onclick="checkMC(this,3)">gekommen</button>
+</div>
+<div class="fb-box" id="fb"></div>
+<button class="next-btn" id="nb" onclick="nextScreen()">➤ Weiter …</button>
+</div>`;}},
+
+/* 5 ── AFB 1: Guter Geschichtsanfang */
+{type:'task',afb:1,id:'t3',points:10,navIcon:'⚡',navLabel:'Aufg. 3',
+correct:1,
+fbOk:'Genau! Kurze Sätze, Präteritum, ein starkes Bild — so fängt eine gute Geschichte an. „strich" und „blieb" sind echte Erzählverben!',
+fbBad:'Nicht ganz. Achte auf: kurze Sätze, Präteritum (nicht Präsens), keine Wiederholung von „dann". Antwort 2 macht es richtig!',
+render(){return `<div class="card">
+<span class="afb-pill">AFB 1 — Erkennen</span>
+<div class="scene-label">📜 Merkmale guter Geschichten</div>
+<div class="tip-box">💡 <strong>Gute Geschichten haben:</strong> kurze Sätze · Präteritum · spannende Adjektive · kein „dann … dann … dann"</div>
+<div class="task-q">Welcher Satz klingt wie ein echter Anfang einer geheimnisvollen Geschichte?</div>
+<div class="opts" id="opts" style="grid-template-columns:1fr;">
+  <button class="opt-btn" onclick="checkMC(this,0)" style="text-align:left">Dann ging Emma in das Haus und dann sah sie etwas und dann rannte sie weg.</button>
+  <button class="opt-btn" onclick="checkMC(this,1)" style="text-align:left">Ein eisiger Wind strich durch den Dunkelwald. Emma blieb stehen.</button>
+  <button class="opt-btn" onclick="checkMC(this,2)" style="text-align:left">Emma geht in ein Haus. Es ist dunkel. Sie sieht etwas Seltsames.</button>
+  <button class="opt-btn" onclick="checkMC(this,3)" style="text-align:left">Es war ein Haus und das Haus war alt und Emma war mutig oder eigentlich nicht.</button>
+</div>
+<div class="fb-box" id="fb"></div>
+<button class="next-btn" id="nb" onclick="nextScreen()">➤ Weiter …</button>
+</div>`;}},
+
+/* 6 ── REGEL 4: Wortspeicher (Pick-6) */
+{type:'wordspeicher',id:'r4',navIcon:'✨',navLabel:'Wörter',
+render(){
+  const cats=[
+    {label:'😱 Adjektive',words:['gruselig','mysteriös','unheimlich','finster','nebelgrau','eisig','lautlos','zitternd','seltsam','düster','gespenstisch','schauerlich']},
+    {label:'🎭 Verben (Präteritum)',words:['schlich','flüsterte','knarrte','erschauerte','starrte','verschwand','knackte','hallte','zitterte','lauerte','knirschte','rauschte']},
+    {label:'📍 Orte & Atmosphäre',words:['im Keller','auf dem Dachboden','hinter der alten Tür','im Nebel','im Mondlicht','am Waldrand','in der Stille','um Mitternacht']},
+  ];
+  const chips=cats.map(cat=>`
+    <div style="margin-bottom:12px">
+      <div style="font-family:sans-serif;font-size:.73rem;color:var(--accent2);margin-bottom:5px">${cat.label}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px">
+        ${cat.words.map(w=>`<span class="ws-pick-chip" onclick="toggleWordPick(this,'${w.replace(/'/g,"\\'")}')">  ${w}</span>`).join('')}
+      </div>
+    </div>`).join('');
+  return `<div class="card">
+<span class="rule-icon">✨</span>
+<div class="rule-title">Wortspeicher — wähle deine 6 Lieblingswörter!</div>
+<div style="font-family:sans-serif;font-size:.84rem;color:var(--text);line-height:1.7;margin-bottom:14px">
+  Tippe auf <strong style="color:var(--gold2)">6 Wörter</strong>, die du für deine Geschichte nutzen möchtest. Sie leuchten grün auf — dann schreib sie dir ins Heft! 📓
+</div>
+<div id="ws-counter" style="font-family:sans-serif;font-size:.82rem;color:var(--muted);margin-bottom:12px">
+  Ausgewählt: <span id="ws-count" style="color:var(--gold2);font-weight:700">0</span> / 6
+</div>
+${chips}
+<div id="ws-selected-box" style="display:none;margin-top:14px;background:var(--panel2);border:1.5px solid var(--green);border-radius:var(--rs);padding:13px;">
+  <div style="font-family:sans-serif;font-size:.76rem;color:var(--green);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px">✏️ Deine 6 Wörter — schreib sie ins Heft:</div>
+  <div id="ws-selected-list" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+  <div style="font-family:sans-serif;font-size:.75rem;color:var(--muted);margin-top:10px">Diese Wörter kannst du gleich beim Schreiben benutzen!</div>
+</div>
+<div style="background:var(--panel2);border-radius:var(--rs);padding:9px 12px;font-size:.79rem;color:var(--muted);margin-top:14px;">
+  <strong style="color:var(--accent2)">Statt „dann":</strong> <em>plötzlich · in diesem Moment · ohne Vorwarnung · urplötzlich · auf einmal · da —</em>
+</div>
+</div>`;}},
+
+/* 7 ── AFB 2: schleichen eingeben */
+{type:'task',afb:2,id:'t4',points:15,navIcon:'✏️',navLabel:'Aufg. 4',
+fbOk:'Perfekt! „schlich" — Vokalwechsel ei → i. Ein echter Erzählwort: „Emma schlich auf Zehenspitzen …"',
+fbBad:'Fast! „schleichen" ist ein starkes Verb: ei → i. Das Präteritum heißt „schlich". Kein -te!',
+render(){return `<div class="card">
+<span class="afb-pill">AFB 2 — Anwenden</span>
+<div class="scene-label">🕯️ Der geheimnisvolle Keller</div>
+<div class="story-excerpt">„Emma <span class="gap" id="g4">___</span> (schleichen) auf Zehenspitzen zur Kellertür."</div>
+<div class="tip-box">💡 <strong>schleichen</strong> → starkes Verb: ei → i → <strong>schlich</strong>. Kein -te!</div>
+<div class="task-q">Schreibe das Präteritum von „schleichen" (er/sie/es):</div>
+<div class="inp-row">
+  <input class="txt-inp" id="ui" type="text" placeholder="Präteritum …" autocomplete="off" autocorrect="off" spellcheck="false">
+  <button class="check-btn" onclick="checkInp(['schlich','Schlich'],'g4','schlich')">✓</button>
+</div>
+<div class="fb-box" id="fb"></div>
+<button class="next-btn" id="nb" onclick="nextScreen()">➤ Weiter …</button>
+</div>`;}},
+
+/* 8 ── AFB 2: knacken eingeben */
+{type:'task',afb:2,id:'t5',points:15,navIcon:'✏️',navLabel:'Aufg. 5',
+fbOk:'Genau! „knackten" — schwaches Verb, Stamm (knack-) + -ten (Plural). Hörst du das schon?',
+fbBad:'Fast! „knacken" ist ein schwaches Verb: Stamm (knack-) + -ten (Plural) = „knackten".',
+render(){return `<div class="card">
+<span class="afb-pill">AFB 2 — Anwenden</span>
+<div class="scene-label">🌫️ Der nebelgraue Wald</div>
+<div class="story-excerpt">„Äste <span class="gap" id="g5">___</span> (knacken) im Dunkel des Waldes."</div>
+<div class="tip-box">💡 <strong>knacken</strong> → schwaches Verb: Stamm + -ten (Plural) → <strong>knackten</strong></div>
+<div class="task-q">Schreibe das Präteritum von „knacken" (sie — Plural):</div>
+<div class="inp-row">
+  <input class="txt-inp" id="ui" type="text" placeholder="Präteritum …" autocomplete="off" autocorrect="off" spellcheck="false">
+  <button class="check-btn" onclick="checkInp(['knackten','Knackten'],'g5','knackten')">✓</button>
+</div>
+<div class="fb-box" id="fb"></div>
+<button class="next-btn" id="nb" onclick="nextScreen()">➤ Weiter …</button>
+</div>`;}},
+
+/* 9 ── AFB 2: Builder (Wörter durcheinander!) */
+{type:'task',afb:2,id:'t6',points:15,navIcon:'🔀',navLabel:'Aufg. 6',
+fbOk:'Super! „Plötzlich hörte Emma ein leises Flüstern." — Präteritum korrekt, und „plötzlich" macht es spannend!',
+fbBad:'Fast! Der Satz muss im Präteritum sein: „hörte" statt „hört". Richtig: „Plötzlich hörte Emma ein leises Flüstern."',
+render(){return `<div class="card">
+<span class="afb-pill">AFB 2 — Anwenden</span>
+<div class="scene-label">🚪 Die alte Tür</div>
+<div class="story-excerpt">„Plötzlich <u>hört</u> Emma ein <u>leises</u> Flüstern." → ins Präteritum umformen!</div>
+<div class="tip-box">💡 <strong>hören</strong> ist ein schwaches Verb: hör- + -te = <strong>hörte</strong></div>
+<div class="task-q">Tippe auf die Wörter in der richtigen Reihenfolge:</div>
+<div class="wbank" id="wbank">
+  ${['ein','hörte','Plötzlich','leises','Emma','Flüstern','.'].map((w,i)=>`<span class="wchip" id="wc${i}" onclick="placeW('${w}',${i})">${w}</span>`).join('')}
+</div>
+<div class="slots" id="slots"><span class="slot-hint">Tippe auf Wörter …</span></div>
+<div class="builder-btns">
+  <button class="check-btn" style="flex:1" onclick="checkBuild(['Plötzlich hörte Emma ein leises Flüstern .','plötzlich hörte emma ein leises flüstern .'])">✓ Prüfen</button>
+  <button class="reset-btn" onclick="resetBuild()">↺</button>
+</div>
+<div class="fb-box" id="fb"></div>
+<button class="next-btn" id="nb" onclick="nextScreen()">➤ Weiter …</button>
+</div>`;}},
+
+/* 10 ── AFB 2: sehen MC */
+{type:'task',afb:2,id:'t7',points:15,navIcon:'✏️',navLabel:'Aufg. 7',
+correct:1,gapId:'g7',gapAnswer:'sah',
+fbOk:'Richtig! „sah" — kurz, stark, gruselig. Starke Verben machen Geschichten lebendig!',
+fbBad:'Nicht ganz. „sehen" ist ein starkes Verb: e → a. Das Präteritum heißt „sah" — kein -te, kein Hilfsverb!',
+render(){return `<div class="card">
+<span class="afb-pill">AFB 2 — Anwenden</span>
+<div class="scene-label">👁️ Die Gestalt im Nebel</div>
+<div class="story-excerpt">„In diesem Moment <span class="gap" id="g7">___</span> (sehen) Emma eine Gestalt im Nebel."</div>
+<div class="tip-box">💡 <strong>sehen</strong> → starkes Verb: e → a → <strong>sah</strong>. Kein -te!</div>
+<div class="task-q">Welches ist das richtige Präteritum von „sehen"?</div>
+<div class="opts" id="opts">
+  <button class="opt-btn" onclick="checkMC(this,0)">sahte</button>
+  <button class="opt-btn" onclick="checkMC(this,1)">sah</button>
+  <button class="opt-btn" onclick="checkMC(this,2)">gesehen</button>
+  <button class="opt-btn" onclick="checkMC(this,3)">siehte</button>
+</div>
+<div class="fb-box" id="fb"></div>
+<button class="next-btn" id="nb" onclick="nextScreen()">➤ Weiter …</button>
+</div>`;}},
+
+/* 11 ── AFB 3: 3 Verben umformen */
+{type:'task',afb:3,id:'t8',points:20,navIcon:'🔥',navLabel:'Aufg. 8',
+fbOk:'Fantastisch! „rannte" (gemischtes Verb), „fiel" (starkes Verb: a→ie), „schrie" (starkes Verb: ei→ie) — du beherrschst beide Typen!',
+fbBad:'Fast! Tipp: „rennen" bildet das Präteritum gemischt (Stamm + -te, aber mit Vokalwechsel). „fallen" und „schreien" sind starke Verben mit Vokalwechsel.',
+render(){return `<div class="card">
+<span class="afb-pill">AFB 3 — Übertragen</span>
+<div class="scene-label">✍️ Vom Präsens ins Präteritum</div>
+<div class="story-excerpt">„Sie <u>rennt</u> zur Tür. Die Kerze <u>fällt</u> um. Emma <u>schreit</u>."</div>
+<div class="tip-box">💡 Schaue dir die Regelseiten an: Welche Verben sind stark (Vokalwechsel)? Welche gemischt (Stamm + -te + Vokalwechsel)? Beispiele für andere Verben: gehen → <strong>ging</strong> (stark) · machen → <strong>machte</strong> (schwach)</div>
+<div class="task-q">Schreibe die drei Präteritum-Formen (getrennt durch Komma):</div>
+<div class="inp-row">
+  <input class="txt-inp" id="ui" type="text" placeholder="Form 1, Form 2, Form 3 …" autocomplete="off" autocorrect="off" spellcheck="false">
+  <button class="check-btn" onclick="checkInpMulti(['rannte','fiel','schrie'])">✓</button>
+</div>
+<div class="fb-box" id="fb"></div>
+<button class="next-btn" id="nb" onclick="nextScreen()">➤ Zur Verbübung …</button>
+</div>`;}},
+
+/* 12 ── AFB 3: 10-Verb-Trainer */
+{type:'verbs',afb:3,id:'tv',points:25,navIcon:'💪',navLabel:'10 Verben',
+verbs:[
+  {inf:'gehen',   pers:'er',  sol:['ging']},
+  {inf:'sehen',   pers:'sie', sol:['sah']},
+  {inf:'laufen',  pers:'er',  sol:['lief']},
+  {inf:'finden',  pers:'sie', sol:['fand']},
+  {inf:'rufen',   pers:'er',  sol:['rief']},
+  {inf:'hören',   pers:'sie', sol:['hörte','hoerte']},
+  {inf:'flüstern',pers:'er',  sol:['flüsterte','fluesterte']},
+  {inf:'kommen',  pers:'sie', sol:['kam']},
+  {inf:'stehen',  pers:'er',  sol:['stand']},
+  {inf:'machen',  pers:'sie', sol:['machte']},
+],
+render(){
+  const sc=SCREENS[G.cur];
+  const rows=sc.verbs.map((v,i)=>`
+    <div class="verb-row">
+      <span class="verb-label" style="font-size:.78rem">${v.pers} <strong style="color:var(--text)">${v.inf}</strong> →</span>
+      <input class="verb-inp" id="vi${i}" type="text" placeholder="Präteritum …" autocomplete="off" autocorrect="off" spellcheck="false">
+      <span class="verb-check-icon" id="vic${i}"></span>
+    </div>`).join('');
+  return `<div class="card">
+<span class="afb-pill">AFB 3 — Üben</span>
+<div class="scene-label">💪 Verbtraining — 10 Verben</div>
+<div class="tip-box">💡 Forme alle 10 Verben ins Präteritum um. Denk an: schwache Verben → -te, starke Verben → Vokalwechsel!</div>
+<div class="verb-grid">${rows}</div>
+<button class="verb-trainer-submit" id="vts" onclick="checkVerbs()">✓ Alle prüfen</button>
+<div class="fb-box" id="fb"></div>
+<button class="next-btn" id="nb" onclick="nextScreen()">➤ Zur Geschichte …</button>
+</div>`;}},
+
+/* 13 ── AFB 3: Kreatives Schreiben */
+{type:'write',afb:3,id:'w1',points:30,navIcon:'✍️',navLabel:'Schreiben',
+render(){return `<div class="card">
+<span class="afb-pill">AFB 3 — Kreatives Schreiben</span>
+<div class="scene-label">🖊️ Schreibe deine eigene Geschichte!</div>
+<div class="story-starter">
+  <span>Die letzte Kerze erlosch.</span><br>
+  Emma stand allein im alten Haus am Waldrand. Der Wind pfiff durch die zerbrochenen Fenster. Dann — ein Geräusch. Ein Knarren, tief aus dem Keller.
+  <br><br>
+  <span style="color:var(--muted);font-style:italic;">Schreibe weiter … (mindestens 5 Sätze)</span>
+</div>
+<div class="word-treasury">
+  <div class="treasury-title">📦 Wortspeicher — tippe an, um einzufügen</div>
+  <div class="wt-section">
+    <div class="wt-label">Adjektive</div>
+    <div class="wt-chips">
+      ${['gruselig','mysteriös','unheimlich','eisig','finster','lautlos','zitternd','nebelgrau'].map(w=>`<span class="wt-chip" onclick="insertWord('${w}')">${w}</span>`).join('')}
+    </div>
+  </div>
+  <div class="wt-section">
+    <div class="wt-label">Verben im Präteritum</div>
+    <div class="wt-chips">
+      ${['schlich','flüsterte','erstarrte','verschwand','raste','starrte','knackte','erschauerte','hallte','lauerte'].map(w=>`<span class="wt-chip" onclick="insertWord('${w}')">${w}</span>`).join('')}
+    </div>
+  </div>
+  <div class="wt-section">
+    <div class="wt-label">Verbindungswörter (statt „dann")</div>
+    <div class="wt-chips">
+      ${['Plötzlich','In diesem Moment','Ohne Vorwarnung','Urplötzlich','Auf einmal','Da —'].map(w=>`<span class="wt-chip" onclick="insertWord('${w}')">${w}</span>`).join('')}
+    </div>
+  </div>
+</div>
+<textarea class="write-area" id="story-inp" placeholder="Emma schlich vorsichtig zur Kellertür …" oninput="updateCount()"></textarea>
+<div class="write-meta">
+  <span>Präteritum · kurze Sätze · mindestens 5 Sätze</span>
+  <span><span id="word-count">0</span> Wörter &nbsp;|&nbsp; <span id="sent-count" class="sent-count">0 Sätze</span></span>
+</div>
+<button class="check-btn" style="width:100%;font-size:.92rem;padding:12px;" onclick="submitStory()">✍️ Geschichte abgeben</button>
+<div class="fb-box" id="fb"></div>
+<button class="next-btn" id="nb" onclick="nextScreen()">🏠 Abenteuer abschließen!</button>
+</div>`;}},
+
+/* 14 ── SPRINT 1 */
+{type:'sprint',afb:3,id:'s1',points:10,navIcon:'🏃',navLabel:'Sprint 1',
+correct:2,gapId:'gs1',gapAnswer:'verschwand',
+fbOk:'Blitzschnell! „verschwand" — starkes Verb: verschwinden → a im Stamm.',
+fbBad:'Nicht ganz. „verschwinden" ist ein starkes Verb: ie → a → „verschwand".',
+render(){return `<div class="sprint-card">
+<span class="sprint-badge">🏃 Sprinteraufgabe 1</span>
+<div class="story-excerpt" style="border-left-color:var(--orange)">„Die Gestalt <span class="gap" id="gs1">___</span> im Nebel."</div>
+<div class="task-q">Präteritum von „verschwinden" (er/sie):</div>
+<div class="opts" id="opts">
+  <button class="opt-btn" onclick="checkMC(this,0)">verschwandete</button>
+  <button class="opt-btn" onclick="checkMC(this,1)">verschwinde</button>
+  <button class="opt-btn" onclick="checkMC(this,2)">verschwand</button>
+  <button class="opt-btn" onclick="checkMC(this,3)">verschwunden</button>
+</div>
+<div class="fb-box" id="fb"></div>
+<button class="next-btn" id="nb" onclick="nextScreen()">➤ Nächster Sprint …</button>
+</div>`;}},
+
+/* 15 ── SPRINT 2 */
+{type:'sprint',afb:3,id:'s2',points:10,navIcon:'🏃',navLabel:'Sprint 2',
+fbOk:'Super! „zitterte" — schwaches Verb, -te Endung. Kurz und gruselig!',
+fbBad:'Fast! „zittern" ist ein schwaches Verb: Stamm (zitter-) + -te = „zitterte".',
+render(){return `<div class="sprint-card">
+<span class="sprint-badge">🏃 Sprinteraufgabe 2</span>
+<div class="story-excerpt" style="border-left-color:var(--orange)">„Emmas Hand <span class="gap" id="gs2">___</span> (zittern)."</div>
+<div class="task-q">Schreibe das Präteritum von „zittern" (er/sie/es):</div>
+<div class="inp-row">
+  <input class="txt-inp" id="ui" type="text" placeholder="Präteritum …" autocomplete="off" autocorrect="off" spellcheck="false">
+  <button class="check-btn" onclick="checkInp(['zitterte','Zitterte'],'gs2','zitterte')">✓</button>
+</div>
+<div class="fb-box" id="fb"></div>
+<button class="next-btn" id="nb" onclick="nextScreen()">➤ Nächster Sprint …</button>
+</div>`;}},
+
+/* 16 ── SPRINT 3 */
+{type:'sprint',afb:3,id:'s3',points:10,navIcon:'🏃',navLabel:'Sprint 3',
+correct:0,gapId:'gs3',gapAnswer:'schrie',
+fbOk:'Perfekt! „schrie" — starkes Verb: schreien → ei fällt weg im Stamm → schrie.',
+fbBad:'Nicht ganz. „schreien" ist ein starkes Verb: ei → ie (nur der ie-Laut bleibt) → „schrie".',
+render(){return `<div class="sprint-card">
+<span class="sprint-badge">🏃 Sprinteraufgabe 3</span>
+<div class="story-excerpt" style="border-left-color:var(--orange)">„Emma <span class="gap" id="gs3">___</span> laut um Hilfe."</div>
+<div class="task-q">Präteritum von „schreien" (er/sie):</div>
+<div class="opts" id="opts">
+  <button class="opt-btn" onclick="checkMC(this,0)">schrie</button>
+  <button class="opt-btn" onclick="checkMC(this,1)">schreigte</button>
+  <button class="opt-btn" onclick="checkMC(this,2)">schrieb</button>
+  <button class="opt-btn" onclick="checkMC(this,3)">schreite</button>
+</div>
+<div class="fb-box" id="fb"></div>
+<button class="next-btn" id="nb" onclick="nextScreen()">➤ Letzter Sprint …</button>
+</div>`;}},
+
+/* 17 ── SPRINT 4 */
+{type:'sprint',afb:3,id:'s4',points:10,navIcon:'🏃',navLabel:'Sprint 4',
+fbOk:'Meisterhaft! „griff" — starkes Verb: greifen → ei → i → griff. Du bist Präteritum-Profi!',
+fbBad:'Fast! „greifen" ist ein starkes Verb: ei → i → „griff". Doppel-f, weil der Vokal kurz ist!',
+render(){return `<div class="sprint-card">
+<span class="sprint-badge">🏃 Sprinteraufgabe 4</span>
+<div class="story-excerpt" style="border-left-color:var(--orange)">„Sie <span class="gap" id="gs4">___</span> (greifen) nach der Taschenlampe."</div>
+<div class="task-q">Schreibe das Präteritum von „greifen" (er/sie/es):</div>
+<div class="inp-row">
+  <input class="txt-inp" id="ui" type="text" placeholder="Präteritum …" autocomplete="off" autocorrect="off" spellcheck="false">
+  <button class="check-btn" onclick="checkInp(['griff','Griff'],'gs4','griff')">✓</button>
+</div>
+<div class="fb-box" id="fb"></div>
+<button class="next-btn" id="nb" onclick="nextScreen()">📋 Zur Checkliste …</button>
+</div>`;}},
+
+/* 18 ── CHECKLISTE: Was macht eine gute Geschichte aus? */
+{type:'checklist',id:'cl1',navIcon:'📋',navLabel:'Checkliste',
+render(){
+  const items=[
+    {
+      icon:'✂️',
+      title:'Kurze, knappe Sätze',
+      good:['Das Haus war alt.','Ein Schatten huschte vorbei.','Emma erstarrte.'],
+      bad:'Und dann ging Emma in das sehr alte und dunkle Haus, das am Waldrand stand, und dort war es ziemlich dunkel.',
+      tip:'Ein Satz = eine Handlung oder ein Bild. Weniger ist mehr!',
+      color:'var(--accent)',
+    },
+    {
+      icon:'⏳',
+      title:'Präteritum — die Erzählzeit',
+      good:['Emma schlich die Treppe hinauf.','Der Wind pfiff durch die Ritzen.','Ein Geräusch hallte durch den Flur.'],
+      bad:'Emma schleicht die Treppe hinauf. Der Wind pfeift.',
+      tip:'In Geschichten: Präteritum statt Präsens! Das klingt wie ein echtes Buch.',
+      color:'var(--gold)',
+    },
+    {
+      icon:'🎨',
+      title:'Spannende Adjektive',
+      good:['der <em>eisige</em> Wind','ein <em>gespenstisches</em> Geräusch','die <em>finstere</em> Treppe'],
+      bad:'der Wind, ein Geräusch, die Treppe',
+      tip:'Adjektive malen Bilder im Kopf des Lesers. Wähle gezielt — nicht jedes Nomen braucht eins!',
+      color:'var(--green)',
+    },
+    {
+      icon:'🚀',
+      title:'Interessante Satzanfänge',
+      good:['Plötzlich erlosch das Licht.','Im Keller bewegte sich etwas.','Ohne Vorwarnung knarrte die Tür.','Langsam drehte Emma sich um.'],
+      bad:'Sie ging. Sie sah. Sie hörte. Sie rannte.',
+      tip:'Beginne mit Zeitangaben, Orten oder Adverbien — nicht immer mit dem Pronomen!',
+      color:'var(--orange)',
+    },
+    {
+      icon:'🚫',
+      title:'Kein „dann … dann … dann"',
+      good:['In diesem Moment erblickte sie…','Urplötzlich brach die Stille.','Auf einmal — Stille.'],
+      bad:'Dann ging sie rein. Dann sah sie etwas. Dann rannte sie weg. Dann schrie sie.',
+      tip:'Benutze Verbindungswörter wie: <em>plötzlich · in diesem Moment · urplötzlich · auf einmal · da —</em>',
+      color:'var(--red)',
+    },
+  ];
+
+  const html=items.map((it,i)=>`
+    <div style="background:var(--panel2);border:1px solid var(--border);border-radius:var(--rs);padding:14px 15px;margin-bottom:10px;border-left:3px solid ${it.color};">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+        <span style="font-size:1.1rem">${it.icon}</span>
+        <span style="font-family:sans-serif;font-size:.9rem;font-weight:700;color:${it.color}">${it.title}</span>
+        <span class="cl-check" id="clc${i}" style="margin-left:auto;font-size:1.1rem;opacity:.25">☐</span>
+      </div>
+      <div style="font-family:sans-serif;font-size:.78rem;margin-bottom:8px;">
+        <div style="color:var(--green);margin-bottom:4px;">✅ So geht's:
+          ${it.good.map(g=>`<span style="display:inline-block;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.3);border-radius:20px;padding:2px 10px;margin:2px 2px 0;font-style:italic">${g}</span>`).join('')}
+        </div>
+        <div style="color:var(--red);">❌ Lieber nicht: <span style="font-style:italic;color:var(--muted)">${it.bad}</span></div>
+      </div>
+      <div style="font-size:.76rem;color:var(--muted);font-style:italic;border-top:1px solid var(--border);padding-top:6px;">💡 ${it.tip}</div>
+    </div>`).join('');
+
+  return `<div class="card">
+<span class="rule-icon">📋</span>
+<div class="rule-title">Checkliste — Was macht eine gute Geschichte aus?</div>
+<div style="font-family:sans-serif;font-size:.83rem;color:var(--muted);margin-bottom:14px;line-height:1.6;">
+  Hake jeden Punkt ab, den du in deiner Geschichte beachtet hast. Dann bist du bereit! ✍️
+</div>
+${html}
+<div style="background:var(--panel2);border:1.5px solid var(--gold);border-radius:var(--rs);padding:12px 14px;margin-top:4px;">
+  <div style="font-family:sans-serif;font-size:.78rem;color:var(--gold2);font-weight:700;margin-bottom:6px;">🏆 Abgehakt: <span id="cl-total" style="font-size:1rem">0</span> / 5</div>
+  <div style="display:flex;gap:5px;" id="cl-stars">${'⬜'.repeat(5)}</div>
+</div>
+</div>`;
+}},
+
+];
+
+/* ════════════════════════════════════════════
+   STATE
+════════════════════════════════════════════ */
+let G={name:'',cur:0,score:0,lives:3,correct:0,answered:false,placedW:[],story:'',done:[]};
+
+function startGame(){
+  G={name:document.getElementById('pname').value.trim()||'Schreiber/in',
+     cur:0,score:0,lives:3,correct:0,answered:false,placedW:[],story:'',done:[]};
+  wsPickedWords=[];focusLog=[];focusLeaveTime=null;clChecked=new Set();
+  document.getElementById('intro').classList.add('hide');
+  document.getElementById('hud').style.display='flex';
+  document.getElementById('game-area').style.display='block';
+  document.getElementById('nav-bar').style.display='block';
+  document.getElementById('hud-name').textContent=G.name;
+  document.getElementById('hud-tot').textContent=SCREENS.length;
+  buildNav();
+  startFocusTracking();
+  renderScreen();
+}
+function restartGame(){
+  stopFocusTracking();
+  document.getElementById('end-screen').classList.remove('show');
+  document.getElementById('intro').classList.remove('hide');
+  document.getElementById('hud').style.display='none';
+  document.getElementById('game-area').style.display='none';
+  document.getElementById('nav-bar').style.display='none';
+}
+
+/* NAV BAR */
+function buildNav(){
+  const ni=document.getElementById('nav-inner');
+  ni.innerHTML='';
+  SCREENS.forEach((sc,i)=>{
+    const b=document.createElement('button');
+    b.className='nav-btn'+(i===G.cur?' active':'');
+    b.id='nb-'+i;
+    b.innerHTML=`<span class="nb-icon">${sc.navIcon}</span><span class="nb-num">${i+1}</span><span>${sc.navLabel}</span>`;
+    b.onclick=()=>jumpTo(i);
+    ni.appendChild(b);
+  });
+}
+function updateNav(){
+  SCREENS.forEach((_,i)=>{
+    const b=document.getElementById('nb-'+i);
+    if(!b)return;
+    b.className='nav-btn'+(i===G.cur?' active':G.done.includes(i)?' done':'');
+  });
+  // scroll active into view
+  const ab=document.getElementById('nb-'+G.cur);
+  if(ab)ab.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+}
+function jumpTo(i){
+  G.cur=i;G.answered=false;G.placedW=[];
+  renderScreen();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function updateHUD(){
+  document.getElementById('hud-score').textContent=G.score;
+  document.getElementById('hud-cur').textContent=G.cur+1;
+  const pct=(G.cur/SCREENS.length)*100;
+  document.getElementById('pbar').style.width=pct+'%';
+  const hw=document.getElementById('hearts-wrap');hw.innerHTML='';
+  for(let i=0;i<3;i++){const h=document.createElement('span');h.className='hrt'+(i>=G.lives?' lost':'');h.textContent='❤️';hw.appendChild(h);}
+}
+
+function renderScreen(){
+  if(G.cur>=SCREENS.length){showEnd();return;}
+  updateHUD();updateNav();
+  G.answered=false;G.placedW=[];
+  const sc=SCREENS[G.cur];
+  const ga=document.getElementById('game-area');
+  ga.innerHTML=sc.render();
+  if(sc.type==='rule'||sc.type==='wordspeicher'){
+    const btn=document.createElement('button');btn.className='rule-nav';
+    btn.textContent=G.cur===SCREENS.length-1?'🏠 Abschließen':'➤ Weiter zur Übung …';
+    btn.onclick=nextScreen;ga.appendChild(btn);
+  }
+  if(sc.type==='checklist'){
+    // attach click handlers to checklist items
+    document.querySelectorAll('.cl-check').forEach((el,i)=>{
+      el.style.cursor='pointer';
+      el.onclick=()=>toggleCheck(i);
+    });
+    const btn=document.createElement('button');btn.className='rule-nav';
+    btn.textContent='🏆 Zum Ergebnis!';
+    btn.onclick=nextScreen;ga.appendChild(btn);
+  }
+  const ui=document.getElementById('ui');
+  if(ui)ui.addEventListener('keydown',e=>{if(e.key==='Enter')ui.nextElementSibling?.click();});
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ── CHECKLISTE ABHAKEN ── */
+let clChecked=new Set();
+function toggleCheck(i){
+  const el=document.getElementById('clc'+i);
+  if(!el)return;
+  if(clChecked.has(i)){
+    clChecked.delete(i);
+    el.textContent='☐';el.style.opacity='.25';
+  } else {
+    clChecked.add(i);
+    el.textContent='☑';el.style.opacity='1';el.style.color='var(--green)';
+    el.style.animation='pop .25s ease';
+  }
+  const tot=clChecked.size;
+  const totEl=document.getElementById('cl-total');
+  if(totEl)totEl.textContent=tot;
+  const starsEl=document.getElementById('cl-stars');
+  if(starsEl)starsEl.innerHTML='⭐'.repeat(tot)+'⬜'.repeat(5-tot);
+}
+
+/* ── WORTSPEICHER PICK-6 ── */
+let wsPickedWords=[];
+function toggleWordPick(el,word){
+  if(el.classList.contains('picked')){
+    // deselect
+    el.classList.remove('picked');
+    wsPickedWords=wsPickedWords.filter(w=>w!==word);
+  } else {
+    if(wsPickedWords.length>=6)return; // max reached
+    el.classList.add('picked');
+    wsPickedWords.push(word);
+  }
+  // update counter
+  const cnt=document.getElementById('ws-count');
+  if(cnt)cnt.textContent=wsPickedWords.length;
+  // toggle maxed state on unpicked chips
+  document.querySelectorAll('.ws-pick-chip:not(.picked)').forEach(c=>{
+    c.classList.toggle('maxed',wsPickedWords.length>=6);
+  });
+  // show/update selected box
+  const box=document.getElementById('ws-selected-box');
+  const list=document.getElementById('ws-selected-list');
+  if(box&&list){
+    box.style.display=wsPickedWords.length>0?'block':'none';
+    list.innerHTML=wsPickedWords.map(w=>`<span style="background:rgba(52,211,153,.15);border:1px solid var(--green);border-radius:20px;padding:4px 12px;font-size:.82rem;color:var(--green);font-family:sans-serif">${w}</span>`).join('');
+  }
+}
+
+/* ── FOCUS TRACKING ── */
+let focusLog=[]; // [{left: timestamp, returned: timestamp}]
+let focusLeaveTime=null;
+let focusActive=false;
+
+function startFocusTracking(){
+  focusActive=true;
+  document.addEventListener('visibilitychange',onVisChange);
+  window.addEventListener('blur',onBlur);
+  window.addEventListener('focus',onFocusBack);
+}
+function stopFocusTracking(){
+  focusActive=false;
+  document.removeEventListener('visibilitychange',onVisChange);
+  window.removeEventListener('blur',onBlur);
+  window.removeEventListener('focus',onFocusBack);
+}
+function onVisChange(){
+  if(!focusActive)return;
+  if(document.hidden){recordLeave();}else{recordReturn();}
+}
+function onBlur(){if(!focusActive)return;recordLeave();}
+function onFocusBack(){if(!focusActive)return;recordReturn();}
+function recordLeave(){
+  if(focusLeaveTime)return; // already left
+  focusLeaveTime=Date.now();
+}
+function recordReturn(){
+  if(!focusLeaveTime)return;
+  const away=Math.round((Date.now()-focusLeaveTime)/1000);
+  if(away>=3){ // ignore accidental flicker < 3s
+    focusLog.push({away});
+    showFocusOverlay(away);
+  }
+  focusLeaveTime=null;
+}
+function showFocusOverlay(secs){
+  const sub=document.getElementById('fo-sub');
+  if(sub)sub.innerHTML=`Das Spiel hat bemerkt, dass du die Seite <strong style="color:var(--red)">${secs} Sekunden</strong> verlassen hast.<br><span style="color:var(--muted)">Deine Lehrerin / dein Lehrer sieht das im Ergebnis.</span>`;
+  document.getElementById('focus-overlay').classList.add('show');
+}
+function dismissFocusOverlay(){
+  document.getElementById('focus-overlay').classList.remove('show');
+}
+
+function nextScreen(){
+  if(!G.done.includes(G.cur))G.done.push(G.cur);
+  G.cur++;
+  if(G.cur>=SCREENS.length){showEnd();return;}
+  renderScreen();
+}
+
+/* ── MC CHECK ── */
+function checkMC(btn,idx){
+  if(G.answered)return;
+  G.answered=true;
+  const sc=SCREENS[G.cur];
+  const allBtns=document.querySelectorAll('.opt-btn');
+  allBtns.forEach(b=>b.disabled=true);
+  btn.classList.add(idx===sc.correct?'ok':'bad');
+  if(idx!==sc.correct)allBtns[sc.correct]?.classList.add('ok');
+  if(sc.gapId){const g=document.getElementById(sc.gapId);if(g){g.textContent=sc.gapAnswer;g.classList.add(idx===sc.correct?'ok':'bad');g.classList.add('popit');}}
+  if(idx===sc.correct){G.score+=sc.points;G.correct++;showFB(true,sc.fbOk);}
+  else{G.lives--;showFB(false,sc.fbBad);}
+  if(!G.done.includes(G.cur))G.done.push(G.cur);
+  updateHUD();updateNav();
+}
+
+/* ── INPUT CHECK ── */
+function checkInp(accepted,gapId,gapVal){
+  if(G.answered)return;
+  const inp=document.getElementById('ui');if(!inp)return;
+  const val=inp.value.trim();if(!val){inp.focus();return;}
+  G.answered=true;
+  const sc=SCREENS[G.cur];
+  const ok=accepted.some(a=>a.toLowerCase()===val.toLowerCase());
+  inp.style.borderColor=ok?'var(--green)':'var(--red)';inp.disabled=true;
+  if(gapId){const g=document.getElementById(gapId);if(g){g.textContent=ok?gapVal:val;g.classList.add(ok?'ok':'bad');}}
+  if(ok){G.score+=sc.points;G.correct++;showFB(true,sc.fbOk);}
+  else{G.lives--;showFB(false,sc.fbBad);}
+  if(!G.done.includes(G.cur))G.done.push(G.cur);
+  updateHUD();updateNav();
+}
+
+/* ── MULTI INPUT (3 Verben) ── */
+function checkInpMulti(required){
+  if(G.answered)return;
+  const inp=document.getElementById('ui');if(!inp)return;
+  const val=inp.value.trim().toLowerCase().replace(/\s/g,'');
+  if(!val){inp.focus();return;}
+  G.answered=true;
+  const sc=SCREENS[G.cur];
+  const ok=required.every(r=>val.includes(r));
+  inp.style.borderColor=ok?'var(--green)':'var(--red)';inp.disabled=true;
+  if(ok){G.score+=sc.points;G.correct++;showFB(true,sc.fbOk);}
+  else{G.lives--;showFB(false,sc.fbBad);}
+  if(!G.done.includes(G.cur))G.done.push(G.cur);
+  updateHUD();updateNav();
+}
+
+/* ── VERB TRAINER ── */
+function checkVerbs(){
+  if(G.answered)return;
+  G.answered=true;
+  const sc=SCREENS[G.cur];
+  let correct=0;
+  sc.verbs.forEach((v,i)=>{
+    const inp=document.getElementById('vi'+i);
+    const icon=document.getElementById('vic'+i);
+    if(!inp)return;
+    inp.disabled=true;
+    const val=inp.value.trim().toLowerCase();
+    const ok=v.sol.some(s=>s.toLowerCase()===val);
+    inp.classList.add(ok?'ok':'bad');
+    icon.textContent=ok?'✓':'✗';
+    icon.style.color=ok?'var(--green)':'var(--red)';
+    if(ok)correct++;
+  });
+  const vts=document.getElementById('vts');if(vts)vts.disabled=true;
+  const pct=correct/sc.verbs.length;
+  let msg='';
+  if(pct===1){G.score+=sc.points;G.correct++;msg='🌟 Perfekt — alle 10 richtig! Du bist Präteritum-Profi!';}
+  else if(pct>=.7){G.score+=Math.round(sc.points*pct);G.correct++;msg=`Gut! ${correct}/10 richtig. Schau dir die roten Felder nochmal an.`;}
+  else{G.lives--;msg=`${correct}/10 richtig. Wiederhole die Regelseiten und versuche es nochmal!`;}
+  showFB(pct>=.7,msg,pct>=.5&&pct<1?'neutral':undefined);
+  if(!G.done.includes(G.cur))G.done.push(G.cur);
+  updateHUD();updateNav();
+}
+
+/* ── BUILDER ── */
+function placeW(word,idx){
+  if(G.answered)return;
+  const chip=document.getElementById('wc'+idx);
+  if(!chip||chip.classList.contains('used'))return;
+  chip.classList.add('used');G.placedW.push({word,idx});renderSlots();
+}
+function renderSlots(){
+  const sl=document.getElementById('slots');if(!sl)return;
+  if(!G.placedW.length){sl.innerHTML='<span class="slot-hint">Tippe auf Wörter …</span>';return;}
+  sl.innerHTML='';
+  G.placedW.forEach(({word,idx})=>{
+    const c=document.createElement('span');c.className='pchip';c.textContent=word;
+    c.onclick=()=>removeW(idx);sl.appendChild(c);
+  });
+}
+function removeW(idx){
+  if(G.answered)return;
+  G.placedW=G.placedW.filter(w=>w.idx!==idx);
+  const chip=document.getElementById('wc'+idx);if(chip)chip.classList.remove('used');
+  renderSlots();
+}
+function resetBuild(){
+  if(G.answered)return;
+  G.placedW=[];
+  document.querySelectorAll('.wchip').forEach(c=>c.classList.remove('used'));
+  renderSlots();
+}
+function checkBuild(solutions){
+  if(G.answered)return;
+  const sc=SCREENS[G.cur];
+  const built=G.placedW.map(w=>w.word).join(' ');
+  if(!built)return;
+  G.answered=true;
+  const ok=solutions.some(s=>s.toLowerCase()===built.toLowerCase());
+  if(ok){G.score+=sc.points;G.correct++;showFB(true,sc.fbOk);}
+  else{G.lives--;showFB(false,sc.fbBad+'<br><em style="color:var(--muted)">Dein Versuch: „'+built+'"</em>');}
+  if(!G.done.includes(G.cur))G.done.push(G.cur);
+  updateHUD();updateNav();
+}
+
+/* ── WORD TREASURY ── */
+function insertWord(word){
+  const ta=document.getElementById('story-inp');if(!ta)return;
+  const pos=ta.selectionStart||ta.value.length;
+  const before=ta.value.substring(0,pos),after=ta.value.substring(pos);
+  const ins=(before&&!before.endsWith(' ')?' ':'')+word+(after&&!after.startsWith(' ')?' ':' ');
+  ta.value=before+ins+after;ta.focus();
+  const np=pos+ins.length;ta.setSelectionRange(np,np);
+  document.querySelectorAll('.wt-chip').forEach(c=>{if(c.textContent===word)c.classList.add('picked');});
+  updateCount();
+}
+function updateCount(){
+  const ta=document.getElementById('story-inp');if(!ta)return;
+  const txt=ta.value.trim();
+  const wc=txt.split(/\s+/).filter(w=>w.length>0).length;
+  const sc=txt.split(/[.!?]+/).filter(s=>s.trim().length>0).length;
+  const wcel=document.getElementById('word-count');if(wcel)wcel.textContent=wc;
+  const scel=document.getElementById('sent-count');
+  if(scel){scel.textContent=sc+' Satz/Sätze';scel.className='sent-count'+(sc>=5?' enough':'');}
+}
+function submitStory(){
+  if(G.answered)return;
+  const ta=document.getElementById('story-inp');if(!ta)return;
+  const txt=ta.value.trim();
+  const sc_count=txt.split(/[.!?]+/).filter(s=>s.trim().length>0).length;
+  if(sc_count<5){showFB(false,'Schreibe mindestens 5 Sätze! Du hast erst '+sc_count+'. Du schaffst das!');return;}
+  G.answered=true;G.story=txt;
+  const sc=SCREENS[G.cur];G.score+=sc.points;G.correct++;
+  ta.disabled=true;
+  showFB(true,'Wunderbar! Deine Geschichte ist entstanden. Klicke auf „Abenteuer abschließen"!','neutral');
+  if(!G.done.includes(G.cur))G.done.push(G.cur);
+  updateHUD();updateNav();
+}
+
+/* ── FEEDBACK ── */
+function showFB(ok,msg,type){
+  const fb=document.getElementById('fb');if(!fb)return;
+  fb.className='fb-box show '+(type||(ok?'ok':'bad'));
+  fb.innerHTML=(type?'💬 ':ok?'✅ ':'❌ ')+msg;
+  const nb=document.getElementById('nb');if(nb)nb.classList.add('show');
+}
+
+/* ── END ── */
+function showEnd(){
+  stopFocusTracking();
+  document.getElementById('hud').style.display='none';
+  document.getElementById('game-area').style.display='none';
+  document.getElementById('nav-bar').style.display='none';
+  const end=document.getElementById('end-screen');end.classList.add('show');
+  const total=SCREENS.filter(s=>s.type!=='rule'&&s.type!=='wordspeicher'&&s.type!=='checklist').length;
+  const pct=G.correct/total;
+  let medal='📚',stars='💫',title='Weiter üben!',sub='Du bist auf dem richtigen Weg!';
+  if(pct>=.9){medal='🏆';stars='⭐⭐⭐';title='Meister/in der geheimnisvollen Geschichten!';sub='Das Präteritum sitzt — und deine Geschichte begeistert!';}
+  else if(pct>=.7){medal='🥇';stars='⭐⭐';title='Mutige/r Schreiber/in!';sub='Sehr gut! Noch etwas üben, dann wird es perfekt.';}
+  else if(pct>=.5){medal='🥈';stars='⭐';title='Auf gutem Weg!';sub='Die Regeln sind klar — beim nächsten Mal klappt es noch besser!';}
+  document.getElementById('e-medal').textContent=medal;
+  document.getElementById('e-stars').textContent=stars;
+  document.getElementById('e-title').textContent=title;
+  document.getElementById('e-sub').textContent=G.name+' — '+sub;
+  const maxPts=SCREENS.filter(s=>s.points).reduce((a,s)=>a+s.points,0);
+  document.getElementById('s-pts').textContent=G.score+' / '+maxPts;
+  document.getElementById('s-cor').textContent=G.correct+' / '+total;
+  document.getElementById('s-lvl').textContent='AFB 1–3 + Sprints';
+  if(G.story){
+    const sd=document.getElementById('story-display');sd.style.display='block';
+    document.getElementById('story-output').textContent=G.story;
+  }
+  // Focus report
+  const totalAway=focusLog.reduce((a,l)=>a+l.away,0);
+  const focusEl=document.createElement('div');
+  focusEl.style.cssText='margin-top:14px;background:var(--panel);border:1px solid var(--border);border-radius:var(--rs);padding:13px;text-align:left;font-family:sans-serif;font-size:.82rem;';
+  if(focusLog.length===0){
+    focusEl.innerHTML=`<span style="color:var(--green)">✅ Fokus-Bericht:</span> <span style="color:var(--muted)">${G.name} war die gesamte Spielzeit auf der Seite.</span>`;
+  } else {
+    const interrupted=focusLog.length;
+    focusEl.innerHTML=`<span style="color:var(--orange)">⚠️ Fokus-Bericht:</span><br>
+    <span style="color:var(--muted)">${G.name} hat die Seite <strong style="color:var(--red)">${interrupted}×</strong> verlassen (ca. <strong style="color:var(--red)">${totalAway}s</strong> weg). ${focusLog.map((l,i)=>`#${i+1}: ${l.away}s`).join(' · ')}</span>`;
+  }
+  // insert focus report before submit area
+  const submitArea=document.getElementById('submit-area');
+  submitArea.parentNode.insertBefore(focusEl,submitArea);
+}
+
+/* ══════════════════════════════════════════
+   JSONBIN KONFIGURATION
+   ► Einmalig einrichten (5 Minuten):
+     1. Gehe zu https://jsonbin.io und erstelle einen kostenlosen Account
+     2. Klicke auf "API Keys" → erzeuge einen neuen Key → kopiere ihn
+     3. Klicke auf "Bins" → "Create Bin" → Inhalt: [] → speichern
+     4. Kopiere die Bin-ID aus der URL (z.B. "64a1b2c3d4e5f6")
+     5. Trage beides unten ein und speichere die Datei
+   ══════════════════════════════════════════ */
+const JSONBIN_API_KEY = 'DEIN-API-KEY-HIER';   // ← hier eintragen
+const JSONBIN_BIN_ID  = 'DEINE-BIN-ID-HIER';   // ← hier eintragen
+
+async function submitResult(){
+  const btn=document.getElementById('submit-btn');
+  const status=document.getElementById('submit-status');
+  if(!btn||!status)return;
+
+  // Konfiguration prüfen
+  if(JSONBIN_API_KEY==='DEIN-API-KEY-HIER'||JSONBIN_BIN_ID==='DEINE-BIN-ID-HIER'){
+    status.style.display='block';
+    status.style.color='var(--orange)';
+    status.innerHTML='⚙️ Die Abgabe ist noch nicht eingerichtet.<br><span style="color:var(--muted)">Deine Lehrkraft muss einmalig den API-Key eintragen. Bitte Bescheid geben!</span>';
+    return;
+  }
+
+  btn.disabled=true;
+  btn.textContent='⏳ Wird gesendet …';
+  status.style.display='none';
+
+  const totalAway=focusLog.reduce((a,l)=>a+l.away,0);
+  const total=SCREENS.filter(s=>s.type!=='rule'&&s.type!=='wordspeicher'&&s.type!=='checklist').length;
+  const maxPts=SCREENS.filter(s=>s.points).reduce((a,s)=>a+s.points,0);
+
+  const eintrag={
+    zeitstempel: new Date().toLocaleString('de-DE'),
+    name: G.name,
+    punkte: G.score,
+    maxPunkte: maxPts,
+    richtig: G.correct,
+    aufgaben: total,
+    fokusUnterbrechungen: focusLog.length,
+    fokusWegSekunden: totalAway,
+    geschichte: G.story||'(keine Geschichte)',
+  };
+
+  try{
+    // Erst bestehende Daten lesen
+    const getRes=await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`,{
+      headers:{'X-Master-Key':JSONBIN_API_KEY,'X-Bin-Meta':'false'}
+    });
+    let liste=[];
+    if(getRes.ok){
+      const data=await getRes.json();
+      liste=Array.isArray(data)?data:[];
     }
-    updateCount();
+    // Neuen Eintrag anhängen
+    liste.push(eintrag);
+    // Zurückschreiben
+    const putRes=await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`,{
+      method:'PUT',
+      headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_API_KEY},
+      body:JSON.stringify(liste)
+    });
+    if(putRes.ok){
+      btn.textContent='✅ Abgegeben!';
+      btn.style.background='var(--green)';
+      btn.style.color='#0c0b12';
+      status.style.display='block';
+      status.style.color='var(--green)';
+      status.innerHTML='✅ Dein Ergebnis wurde erfolgreich abgegeben. Deine Lehrkraft kann es jetzt sehen!';
+    } else {
+      throw new Error('HTTP '+putRes.status);
+    }
+  } catch(err){
+    btn.disabled=false;
+    btn.textContent='📤 Nochmal versuchen';
+    status.style.display='block';
+    status.style.color='var(--red)';
+    status.innerHTML='❌ Fehler beim Abgeben. Bitte nochmal versuchen oder die Lehrkraft informieren.';
+    console.error('JSONBin Fehler:',err);
   }
-
-  function updateCount() {
-    const pflicht = [1,2,3,4].filter(n => done.has(n)).length;
-    document.getElementById('progress-count').textContent =
-      pflicht + ' von 4 Pflicht-Stationen';
-  }
+}
 </script>
 </body>
 </html>
